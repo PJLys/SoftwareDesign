@@ -23,6 +23,12 @@
 	- A proxy works as a middleman between a client and some sort of server
 	- use when server requests are expensive (long delay, lots of data)
 11. Iterator pattern
+	- Class that enables access to elements of an aggregate object sequenctially
 12. Composite pattern
+	- Interface individual and composite components
+	- Use together with Iterator
 13. State pattern
+	- Object looks like it changes its class depending on its state.
 14. Template Method pattern
+	- Gives a blueprint for algorithm structures
+	- Define steps; subclasses will do implementation
