@@ -2,6 +2,7 @@ package databases;
 
 import person.Person;
 import java.util.LinkedList;
+import java.util.Optional;
 
 /**
  * Person DB
@@ -48,4 +49,9 @@ public class PersonDB {
         }
         return -1;
     }
+
+    public Optional<Person> find(String name){
+        return this.db.stream().filter(p ->name.equals(p.getName())).findFirst();
+    }
+
 }
