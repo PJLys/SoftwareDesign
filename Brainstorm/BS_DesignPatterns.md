@@ -17,7 +17,7 @@
 	- Invoker sends commands, linked to a certain actuator who receives (un)execute task.
 8. Adapter pattern
 	- Adapter interfaces an adaptee to a client, who aren't compatible.
-9. Facade pattern
+9. Facade pattern = interface?
 	- Create a class that works as an interface between client and the system.
 10. Proxy pattern
 	- A proxy works as a middleman between a client and some sort of server
