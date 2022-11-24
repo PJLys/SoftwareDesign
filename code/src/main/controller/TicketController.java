@@ -24,8 +24,6 @@ public class TicketController implements Controller {
      * Adds a person based on its name
      * @param name name of the person we want to add
      * @return 0 = succes; -1 = person already exists
-     *
-     *
      */
     @Override
     public int addPerson(String name) {
