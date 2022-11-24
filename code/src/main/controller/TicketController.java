@@ -2,6 +2,9 @@ package controller;
 
 import databases.*;
 import person.Person;
+import tickets.EvenSplitTicket;
+import tickets.Ticket;
+import tickets.UnevenSplitTicket;
 
 import java.util.Optional;
 
@@ -10,13 +13,27 @@ public class TicketController implements Controller {
     private TicketDB tickets;
     private PersonDB persons;
 
+    public TicketController(TicketDB ticketDB){
+        this.tickets = ticketDB;
+    }
+
     @Override
-    public int addEvenSplitTicket() {
+    public int addEvenSplitTicket(Ticket t) {
+        if (! (t instanceof EvenSplitTicket))
+            return -1;
+        if (tickets.find(t))
+            return -1;
+        tickets.addTicket(t);
         return 0;
     }
 
     @Override
-    public int addUnevenSplitTicket() {
+    public int addUnevenSplitTicket(Ticket t) {
+        if (! (t instanceof UnevenSplitTicket))
+            return -1;
+        if (tickets.find(t))
+            return -1;
+        tickets.addTicket(t);
         return 0;
     }
 

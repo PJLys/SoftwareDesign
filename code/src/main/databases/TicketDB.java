@@ -21,7 +21,7 @@ public class TicketDB {
         this.db = new LinkedList<>();
     }
 
-    public TicketDB getInstance() {
+    public static TicketDB getInstance() {
         if (instance == null)
             this.instance = new TicketDB();
         return instance;
@@ -49,5 +49,9 @@ public class TicketDB {
             return 0;
         }
         return -1;
+    }
+
+    public boolean find(Ticket t){
+        return this.db.stream().findAny().equals(t);
     }
 }
