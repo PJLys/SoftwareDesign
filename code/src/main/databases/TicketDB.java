@@ -10,7 +10,7 @@ import java.util.LinkedList;
  */
 public class TicketDB {
 
-    private TicketDB instance = null;
+    private static TicketDB instance = null;
 
     /**
      * DB is a Linked List : easy addition & removal of Tickets
@@ -23,7 +23,7 @@ public class TicketDB {
 
     public static TicketDB getInstance() {
         if (instance == null)
-            this.instance = new TicketDB();
+            instance = new TicketDB();
         return instance;
     }
 

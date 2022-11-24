@@ -10,7 +10,7 @@ import java.util.Optional;
  */
 
 public class PersonDB {
-    private PersonDB instance = null;
+    private static PersonDB instance = null;
     /**
      * DB is a LinkedList : easy addition & removal of Persons
      */
@@ -20,10 +20,10 @@ public class PersonDB {
         this.db = new LinkedList<>();
     }
 
-    public PersonDB getInstance() {
+    public static PersonDB getInstance() {
         if (instance==null)
-            this.instance = new PersonDB();
-        return this.instance;
+            instance = new PersonDB();
+        return instance;
     }
 
     /**
