@@ -9,25 +9,33 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.EnumSet;
 
-public class ESTPanel extends JPanel {
+public class TicketPanel extends JPanel {
     private static JButton addTicketButton;
 
-    private static JList typeList;
+    private static JList splitTypeList;
+
+    private static JList expenseTypeList;
 
     private static JList payerList;
 
     private final Controller controller;
 
-    public ESTPanel(Controller controller, ViewFrame viewFrame) {
+    public TicketPanel(Controller controller, ViewFrame viewFrame) {
         this.controller = controller;
+
         addTicketButton = new JButton("Add Ticket");
         addTicketButton.addActionListener(new AddTicketActionListener());
+
+        String splitType[] = {"Even", "Uneven"};
+        splitTypeList = new JList(splitType);
+
         DefaultListModel<Object> defaultListModel = new DefaultListModel<>();
         EnumSet.allOf(ExpenseType.class).forEach(defaultListModel::addElement);
-        typeList = new JList<>(defaultListModel);
-        this.add(addTicketButton);
-        this.add(typeList);
+        expenseTypeList = new JList<>(defaultListModel);
 
+        this.add(splitTypeList);
+        this.add(expenseTypeList);
+        this.add(addTicketButton);
     }
 
     public static class AddTicketActionListener implements ActionListener {

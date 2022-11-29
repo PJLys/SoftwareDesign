@@ -74,7 +74,7 @@ public class TicketController implements Controller {
         System.out.println("Give payer's name: ");
         String name = reader.readLine();
         Optional<Person> p = this.persons.find(name);
-        if (p.isEmpty())
+        if (p.isPresent())
             throw new NoSuchElementException("Person doesn't exist");
         Person payer = p.get();
 
@@ -101,7 +101,7 @@ public class TicketController implements Controller {
         System.out.println("Give payer's name: ");
         String name = reader.readLine();
         Optional<Person> p = this.persons.find(name);
-        if (p.isEmpty())
+        if (p.isPresent())
             throw new NoSuchElementException("Person doesn't exist");
         Person payer = p.get();
 

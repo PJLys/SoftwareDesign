@@ -1,2 +1,4 @@
-package view.panels;public class CalculateTotalPanel {
+package view.panels;
+
+public class CalculateTotalPanel {
 }

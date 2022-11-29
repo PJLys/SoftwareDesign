@@ -2,6 +2,8 @@ package view;
 
 import controller.Controller;
 import controller.TicketController;
+import view.panels.TicketPanel;
+import view.panels.MenuPanel;
 import view.panels.PersonPanel;
 
 import javax.swing.*;
@@ -12,23 +14,23 @@ import java.beans.PropertyChangeListener;
 
 public class ViewFrame extends JFrame implements PropertyChangeListener {
     private Controller controller;
-    private JPanel personPanel, estPanel, ustPanel, calculateTotalPanel, menuPanel;
-    private JButton personButton, estButton, ustButton, calculateTotalButton, addPersonButton, addESTButton, addUSTButton;
+    private JPanel personPanel, ticketPanel, calculateTotalPanel, menuPanel;
 
     public int initialize(TicketController ticketController) {
         this.controller = ticketController;
+        createPanels();
         this.setSize(800, 400);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        createPanels();
+        this.getContentPane().add(menuPanel);
+        this.setVisible(true);
         return 0;
     }
 
     private int createPanels() {
         personPanel = new PersonPanel(controller, this);
-        estPanel = new JPanel();
-        ustPanel = new JPanel();
+        ticketPanel = new TicketPanel(controller, this);
         calculateTotalPanel = new JPanel();
-        menuPanel = new JPanel();
+        menuPanel = new MenuPanel(this);
         return 0;
     }
 
@@ -38,24 +40,17 @@ public class ViewFrame extends JFrame implements PropertyChangeListener {
             getContentPane().removeAll();
             getContentPane().add(personPanel);
             repaint();
+            setVisible(true);
         }
     }
 
-    public class ESTActionListener implements ActionListener {
+    public class TicketActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             getContentPane().removeAll();
-            getContentPane().add(estPanel);
+            getContentPane().add(ticketPanel);
             repaint();
-        }
-    }
-
-    public class USTActionListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            getContentPane().removeAll();
-            getContentPane().add(ustPanel);
-            repaint();
+            setVisible(true);
         }
     }
 
@@ -64,6 +59,14 @@ public class ViewFrame extends JFrame implements PropertyChangeListener {
         public void actionPerformed(ActionEvent e) {
             getContentPane().removeAll();
             getContentPane().add(calculateTotalPanel);
+            repaint();
+        }
+    }
+    public class BackActionListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            getContentPane().removeAll();
+            getContentPane().add(menuPanel);
             repaint();
         }
     }
