@@ -14,12 +14,14 @@ import java.beans.PropertyChangeListener;
 
 public class ViewFrame extends JFrame implements PropertyChangeListener {
     private Controller controller;
-    private JPanel personPanel, ticketPanel, calculateTotalPanel, menuPanel;
+    private JPanel personPanel, calculateTotalPanel, menuPanel;
+
+    private TicketPanel ticketPanel;
 
     public int initialize(TicketController ticketController) {
         this.controller = ticketController;
         createPanels();
-        this.setSize(800, 400);
+        this.setSize(800, 800);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.getContentPane().add(menuPanel);
         this.setVisible(true);
@@ -48,6 +50,7 @@ public class ViewFrame extends JFrame implements PropertyChangeListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             getContentPane().removeAll();
+            ticketPanel.reinitialize();
             getContentPane().add(ticketPanel);
             repaint();
             setVisible(true);

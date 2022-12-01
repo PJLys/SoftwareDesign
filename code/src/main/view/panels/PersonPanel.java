@@ -12,7 +12,7 @@ public class PersonPanel extends JPanel {
 
     private static JButton backButton;
 
-    private static JTextArea nameField;
+    private static JTextField nameField;
 
     private final Controller controller;
 
@@ -22,13 +22,13 @@ public class PersonPanel extends JPanel {
         addPersonButton.addActionListener(new AddPersonActionListener());
         backButton = new JButton("Back");
         backButton.addActionListener(viewFrame. new BackActionListener());
-        nameField = new JTextArea(1, 30);
+        nameField = new JTextField( 30);
         this.add(addPersonButton);
         this.add(backButton);
         this.add(nameField);
     }
 
-    public static class AddPersonActionListener implements ActionListener {
+    private static class AddPersonActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             // Use controller to create new person
