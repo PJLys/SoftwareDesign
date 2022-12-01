@@ -10,7 +10,7 @@ public class TicketIt implements Iterator {
 
     @Override
     public boolean hasNext() {
-        return false;
+        return this.index < (TicketDB.getInstance().size()-1);
     }
 
     @Override

@@ -7,16 +7,29 @@ public class PersonIt implements Iterator {
     public PersonIt() {
 
     }
+
+    /**
+     * Checks if current index < size -1
+     * @return true if not last element
+     */
     @Override
     public boolean hasNext() {
-        return false;
+        return this.index < (PersonDB.getInstance().size() - 1) ;
     }
 
+    /**
+     * Increases current index and returns object at new index
+     * @return Person at new index
+     */
     @Override
     public Object next() {
         return PersonDB.getInstance().get(index++);
     }
 
+    /**
+     * Removes person at current index
+     * @return error code (-1 if person could not be found)
+     */
     @Override
     public int remove() {
         PersonDB db = PersonDB.getInstance();
