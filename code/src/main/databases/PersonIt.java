@@ -5,7 +5,7 @@ import iterator.Iterator;
 public class PersonIt implements Iterator {
     private int index;
     public PersonIt() {
-
+        this.index = -1;
     }
 
     /**

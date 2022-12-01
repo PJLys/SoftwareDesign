@@ -5,7 +5,7 @@ import iterator.Iterator;
 public class TicketIt implements Iterator {
     private int index;
     public TicketIt() {
-
+        this.index = -1;
     }
 
     @Override

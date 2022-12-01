@@ -12,4 +12,7 @@ public class UnevenSplitTicket extends Ticket {
         super(t, p);
         this.entries = entries;
     }
+    public ArrayList<UnevenEntry> getEntries() {
+        return entries;
+    }
 }

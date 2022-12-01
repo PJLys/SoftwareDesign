@@ -3,8 +3,8 @@ package tickets.unevensplit;
 import person.Person;
 
 public class UnevenEntry {
-    Person p;
-    double val;
+    public Person p;
+    public double val;
 
     public UnevenEntry(Person p, double val) {
         this.p = p;
