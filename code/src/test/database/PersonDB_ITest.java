@@ -12,9 +12,7 @@ public class PersonDB_ITest {
     public PersonDB_ITest() {}
     PersonDB pdb;
     Person alex = new Person("Alex");
-    Person bart = new Person("Bart");
-    Person chad = new Person("Chad");
-    Person don = new Person("Don");
+
     @Before
     public void initialize() {
         pdb = PersonDB.getInstance();
