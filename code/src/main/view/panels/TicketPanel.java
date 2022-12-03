@@ -104,17 +104,15 @@ public class TicketPanel extends JPanel {
         personStringList = new String[]{"Placeholder 1", "Placeholder 2"};
     }
 
-    private void initializeEST() {
+    private void initializeUST() {
         this.add(personsLabel);
         this.add(debtLabel);
         personsLabel.setVisible(true);
         debtLabel.setVisible(true);
-        addESTPersonDebtFields();
-        personListArray.forEach(this::add);
-        amountArray.forEach(this::add);
+        addUSTPersonDebtFields();
     }
 
-    private void addESTPersonDebtFields() {
+    private void addUSTPersonDebtFields() {
         JTextField amountField = new JTextField();
         amountField.setInputVerifier(new DoubleVerifier());
         amountArray.add(amountField);
@@ -129,7 +127,7 @@ public class TicketPanel extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             // Use controller to add ticket
-            System.out.println("Placeholder for creating EST");
+            System.out.println("Placeholder for creating UST");
             System.out.println(splitTypeList.getSelectedValue());
             System.out.println(expenseTypeList.getSelectedValue());
         }
@@ -154,15 +152,23 @@ public class TicketPanel extends JPanel {
     private class PayerSelectionListener implements ListSelectionListener {
         @Override
         public void valueChanged(ListSelectionEvent e) {
-            initializeEST();
+            if(!e.getValueIsAdjusting()) {
+                TicketPanel.this.initializeUST();
+            }
         }
     }
 
     private class USTPersonSelectionListener implements ListSelectionListener {
         @Override
         public void valueChanged(ListSelectionEvent e) {
-            addTicketButton.setVisible(true);
-            addESTPersonDebtFields();
+            if (!e.getValueIsAdjusting()) {
+                addTicketButton.setVisible(true);
+                JList source = (JList) e.getSource();
+                if (personListArray.indexOf(source) == personListArray.size() - 1) {
+                    TicketPanel.this.addUSTPersonDebtFields();
+                    TicketPanel.this.revalidate();
+                }
+            }
         }
     }
 }

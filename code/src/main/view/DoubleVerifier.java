@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Objects;
 
 public class DoubleVerifier extends InputVerifier implements ActionListener {
     @Override
@@ -25,7 +26,11 @@ public class DoubleVerifier extends InputVerifier implements ActionListener {
     private boolean checkField(JComponent input) {
         try {
             JTextField inputField = (JTextField) input;
-            double x = Double.parseDouble(inputField.getText());
+            String text = inputField.getText();
+            if (Objects.equals(text, "")) {
+                return true;
+            }
+            double x = Double.parseDouble(text);
             return true;
         }
         catch(NumberFormatException e) {
