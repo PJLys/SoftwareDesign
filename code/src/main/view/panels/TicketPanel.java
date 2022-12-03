@@ -21,17 +21,21 @@ public class TicketPanel extends JPanel {
 
     private static JList<String> splitTypeList;
 
-    private static JList expenseTypeList;
+    private static JList<Object> expenseTypeList;
 
     private static JList<String> payerList;
 
-    private static ArrayList<JList> personListArray;
+    private static JTextField totalField;
+
+    private static ArrayList<JList<String>> personListArray;
 
     private static ArrayList<JTextField> amountArray;
 
     private static JLabel expenseTypeLabel;
 
     private static JLabel payerLabel;
+
+    private static JLabel totalLabel;
 
     private static JLabel personsLabel;
 
@@ -57,8 +61,13 @@ public class TicketPanel extends JPanel {
         expenseTypeLabel = new JLabel("Type of expense");
         DefaultListModel<Object> defaultListModel = new DefaultListModel<>();
         EnumSet.allOf(ExpenseType.class).forEach(defaultListModel::addElement);
-        expenseTypeList = new JList<>(defaultListModel);
+        expenseTypeList = new JList<> (defaultListModel);
         expenseTypeList.addListSelectionListener(new ExpenseTypeSelectionListener());
+
+        totalLabel = new JLabel("Total amount");
+        totalField = new JTextField("0");
+        totalField.addActionListener(new TotalActionListener());
+        totalField.setInputVerifier(new DoubleVerifier());
 
         payerLabel = new JLabel("Payer:");
         payerList = new JList<>(personStringList);
@@ -80,6 +89,8 @@ public class TicketPanel extends JPanel {
         this.add(expenseTypeList);
         this.add(payerLabel);
         this.add(payerList);
+        this.add(totalLabel);
+        this.add(totalField);
     }
 
     public void reinitialize() {
@@ -93,6 +104,8 @@ public class TicketPanel extends JPanel {
         expenseTypeList.setVisible(false);
         payerLabel.setVisible(false);
         payerList.setVisible(false);
+        totalLabel.setVisible(false);
+        totalField.setVisible(false);
         personsLabel.setVisible(false);
         debtLabel.setVisible(false);
 
@@ -116,7 +129,7 @@ public class TicketPanel extends JPanel {
         JTextField amountField = new JTextField();
         amountField.setInputVerifier(new DoubleVerifier());
         amountArray.add(amountField);
-        JList personList = new JList(personStringList);
+        JList<String> personList = new JList<>(personStringList);
         personList.addListSelectionListener(new USTPersonSelectionListener());
         personListArray.add(personList);
         this.add(personList);
@@ -152,8 +165,27 @@ public class TicketPanel extends JPanel {
     private class PayerSelectionListener implements ListSelectionListener {
         @Override
         public void valueChanged(ListSelectionEvent e) {
-            if(!e.getValueIsAdjusting()) {
-                TicketPanel.this.initializeUST();
+            totalField.setVisible(true);
+            totalLabel.setVisible(true);
+        }
+    }
+
+    private class TotalActionListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JTextField source = (JTextField) e.getSource();
+            try {
+                double value = DoubleVerifier.getDouble(source);
+                if (value > 0) {
+                    if (splitTypeList.getSelectedIndex() == 0) {
+                        addTicketButton.setVisible(true);
+                    }
+                    else {
+                        TicketPanel.this.initializeUST();
+                    }
+                }
+            }
+            catch (NumberFormatException ignored) {
             }
         }
     }
@@ -163,7 +195,7 @@ public class TicketPanel extends JPanel {
         public void valueChanged(ListSelectionEvent e) {
             if (!e.getValueIsAdjusting()) {
                 addTicketButton.setVisible(true);
-                JList source = (JList) e.getSource();
+                JList<String> source = (JList<String>) e.getSource();
                 if (personListArray.indexOf(source) == personListArray.size() - 1) {
                     TicketPanel.this.addUSTPersonDebtFields();
                     TicketPanel.this.revalidate();
