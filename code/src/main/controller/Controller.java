@@ -1,5 +1,5 @@
 package controller;
-import debts.Debt;
+import debts.Transaction;
 import person.Person;
 import tickets.Ticket;
 
@@ -14,5 +14,5 @@ public interface Controller {
     public Ticket makeEvenSplitTicket() throws IOException;
     public Ticket makeUnevenSplitTicket() throws IOException;
     public Person getPerson(String name);
-    public ArrayList<Debt> calcDebt();
+    public ArrayList<Transaction> calcDebt();
 }

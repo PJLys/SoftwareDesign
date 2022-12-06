@@ -2,7 +2,7 @@ package controller;
 
 
 import databases.*;
-import debts.Debt;
+import debts.Transaction;
 import factory.TicketFactory;
 import iterator.Iterator;
 import person.Person;
@@ -71,6 +71,20 @@ public class TicketController implements Controller {
 
     @Override
     public Ticket makeEvenSplitTicket() throws IOException {
+        return null;
+    }
+
+    @Override
+    public Ticket makeUnevenSplitTicket() throws IOException {
+        return null;
+    }
+
+    /**
+     * Creates an EST with terminal input
+     * @return a new even split ticket
+     * @throws IOException when there's a problem with input streams
+     */
+    public Ticket makeEvenSplitTicket_terminalIF() throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Give payer's name: ");
         String name = reader.readLine();
@@ -96,8 +110,12 @@ public class TicketController implements Controller {
         return tf.createEvenSplitTicket(payer, attendants);
     }
 
-    @Override
-    public Ticket makeUnevenSplitTicket() throws IOException {
+    /**
+     * Creates an UST with terminal input
+     * @return a new uneven split ticket
+     * @throws IOException when there's a problem with input streams
+     */
+    public Ticket makeUnevenSplitTicket_terminalIF() throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Give payer's name: ");
         String name = reader.readLine();
@@ -122,13 +140,24 @@ public class TicketController implements Controller {
         return tf.createUnevenSplitTicket(payer, attendants);
     }
 
+    /**
+     * Will return a person based on its name
+     * @param name name of person
+     * @return a person or a null pointer
+     */
     @Override
     public Person getPerson(String name) {
         Optional<Person> p = this.persons.find(name);
         return p.orElse(null);
     }
 
-    public ArrayList<Debt> calcDebt(){
+    /**
+     * 1) Iterate through people to create a debt hashmap
+     * 2) Iterate through tickets and update debt hashmap accordingly
+     * 3) Iterate through the hashmap in order to find who owes who.
+     * @return list of transactions to be done
+     */
+    public ArrayList<Transaction> calcDebt(){
         Iterator tit = TicketDB.getInstance().createIt();
         Iterator pit = PersonDB.getInstance().createIt();
 
@@ -164,7 +193,7 @@ public class TicketController implements Controller {
             }
         }
 
-        ArrayList<Debt> transactions = new ArrayList<Debt>();
+        ArrayList<Transaction> transactions = new ArrayList<Transaction>();
         Set<Person> keyset = debts.keySet();
         for (Person p1:keyset){
             double bal1 = debts.get(p1);
@@ -176,11 +205,11 @@ public class TicketController implements Controller {
                             bal1 += bal2;
                             debts.replace(p1, bal1);
                             debts.replace(p2, 0.0);
-                            transactions.add(new Debt(p1, p2, bal2));
+                            transactions.add(new Transaction(p1, p2, bal2));
                         } else {
                             debts.replace(p1, 0.0);
                             debts.replace(p2, bal1+bal2);
-                            transactions.add(new Debt(p1, p2, -bal1));
+                            transactions.add(new Transaction(p1, p2, -bal1));
                             break;
                         }
                     }
