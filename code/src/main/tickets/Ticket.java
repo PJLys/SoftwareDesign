@@ -18,4 +18,12 @@ public abstract class Ticket {
     public ExpenseType getType() {
         return this.type;
     }
+
+    @Override
+    public String toString() {
+        return "Ticket{" +
+                "type=" + type +
+                ", payer=" + payer +
+                '}';
+    }
 }

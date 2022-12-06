@@ -20,10 +20,6 @@ public class Transaction {
      */
     @Override
     public String toString() {
-        return "Transaction{" +
-                "from " + from +
-                ", to " + to +
-                ", amount: €" + amount +
-                '}';
+        return "\nFrom "+from.getName()+"\tTo "+to.getName()+"\tAmount = "+amount;
     }
 }

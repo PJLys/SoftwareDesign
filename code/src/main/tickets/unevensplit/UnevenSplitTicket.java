@@ -15,4 +15,12 @@ public class UnevenSplitTicket extends Ticket {
     public ArrayList<UnevenEntry> getEntries() {
         return entries;
     }
+
+    @Override
+    public String toString() {
+        return "UnevenSplitTicket{" +
+                "Payer: " + super.getPayer() +
+                "entries: " + entries +
+                '}';
+    }
 }

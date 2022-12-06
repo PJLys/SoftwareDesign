@@ -10,4 +10,9 @@ public class UnevenEntry {
         this.p = p;
         this.val = val;
     }
+
+    @Override
+    public String toString() {
+        return "\n\t" + p.getName()+" : " + val;
+    }
 }
