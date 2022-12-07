@@ -18,22 +18,20 @@ public class ViewFrame extends JFrame implements PropertyChangeListener {
 
     private TicketPanel ticketPanel;
 
-    public int initialize(TicketController ticketController) {
+    public void initialize(TicketController ticketController) {
         this.controller = ticketController;
         createPanels();
         this.setSize(800, 800);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.getContentPane().add(menuPanel);
         this.setVisible(true);
-        return 0;
     }
 
-    private int createPanels() {
+    private void createPanels() {
         personPanel = new PersonPanel(controller, this);
         ticketPanel = new TicketPanel(controller, this);
         calculateTotalPanel = new JPanel();
         menuPanel = new MenuPanel(this);
-        return 0;
     }
 
     public class PersonActionListener implements ActionListener {
