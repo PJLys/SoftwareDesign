@@ -16,4 +16,20 @@ public class EvenSplitTicket extends Ticket {
         this.ppp = pricePerPerson;
         this.persons = persons;
     }
+
+    public double getPpp() {
+        return ppp;
+    }
+    public ArrayList<Person> getPersons(){
+        return this.persons;
+    }
+
+    @Override
+    public String toString() {
+        return "EvenSplitTicket{" +
+                "Payer: " + super.getPayer() +
+                "Price per person=" + ppp +
+                ", Attendants=" + persons +
+                '}';
+    }
 }

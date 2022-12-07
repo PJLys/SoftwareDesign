@@ -1,26 +1,41 @@
 package databases;
 
+import iterator.Aggregate;
+import iterator.Iterator;
 import tickets.Ticket;
+
+import java.rmi.NoSuchObjectException;
 import java.util.LinkedList;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 /**
  * Ticket DB
  * - Singleton (private constructor & public getInstance())
+ * - Aggregate for TicketIt
  */
-public class TicketDB {
+public class TicketDB implements Aggregate {
 
     private static TicketDB instance = null;
 
     /**
      * DB is a Linked List : easy addition & removal of Tickets
      */
-    private LinkedList<Ticket> db;
+    private final LinkedList<Ticket> db;
 
+    /**
+     * Private constructor (Singleton)
+     */
     private TicketDB(){
         this.db = new LinkedList<>();
     }
 
+    /**
+     * Intializes or returns intialized db
+     * @return db
+     */
     public static TicketDB getInstance() {
         if (instance == null)
             instance = new TicketDB();
@@ -51,7 +66,34 @@ public class TicketDB {
         return -1;
     }
 
-    public boolean find(Ticket t){
-        return this.db.stream().findAny().equals(t);
+    /**
+     * Return ticket in db equal to input
+     * @param t ticket to find in db
+     * @return ticket in db
+     */
+    public boolean find(Ticket t) {
+        return this.db.stream().anyMatch(o -> o.equals(t));
+    }
+
+    @Override
+    public Iterator createIt() {
+        return new TicketIt();
+    }
+
+    /**
+     * Used by iterator to get a ticket based on the index
+     * @param index index of the iterator
+     * @return Ticket at index
+     */
+    protected Ticket get(int index) {
+        return this.db.get(index);
+    }
+
+    /**
+     * Used by iterator to determine if ticket has next value
+     * @return size of db
+     */
+    protected int size(){
+        return this.db.size();
     }
 }

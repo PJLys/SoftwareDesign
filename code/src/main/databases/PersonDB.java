@@ -1,6 +1,10 @@
 package databases;
 
+import iterator.Aggregate;
+import iterator.Iterator;
 import person.Person;
+import tickets.Ticket;
+
 import java.util.LinkedList;
 import java.util.Optional;
 
@@ -9,7 +13,7 @@ import java.util.Optional;
  * - Singleton (private constructor & public getInstance())
  */
 
-public class PersonDB {
+public class PersonDB implements Aggregate {
     private static PersonDB instance = null;
     /**
      * DB is a LinkedList : easy addition & removal of Persons
@@ -54,4 +58,25 @@ public class PersonDB {
         return this.db.stream().filter(p ->name.equals(p.getName())).findFirst();
     }
 
+    @Override
+    public Iterator createIt() {
+        return new PersonIt();
+    }
+
+    /**
+     * Used by iterator to get a person based on the index
+     * @param index index of the iterator
+     * @return Person at index
+     */
+    protected Person get(int index) {
+        return this.db.get(index);
+    }
+
+    /**
+     * Used by iterator to determine if person has neighbour
+     * @return size of db
+     */
+    protected int size(){
+        return this.db.size();
+    }
 }

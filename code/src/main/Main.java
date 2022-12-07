@@ -8,7 +8,5 @@ public class Main {
     public static void main(String[] args) {
         ViewFrame viewFrame = new ViewFrame();
         viewFrame.initialize(new TicketController(TicketDB.getInstance(),  PersonDB.getInstance(), new TicketFactory()));
-
-
     }
 }
