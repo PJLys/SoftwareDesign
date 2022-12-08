@@ -23,7 +23,6 @@ public class PersonDB implements Aggregate, Database {
         this.db = new LinkedList<>();
     }
 
-    @Override
     public static PersonDB getInstance() {
         if (instance==null)
             instance = new PersonDB();

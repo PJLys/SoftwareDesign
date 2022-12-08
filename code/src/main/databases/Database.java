@@ -1,5 +1,7 @@
 package databases;
 
 public interface Database {
-    Database getInstance();
+    static Database getInstance() {
+        return null;
+    }
 }
