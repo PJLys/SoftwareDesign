@@ -4,11 +4,8 @@ import iterator.Aggregate;
 import iterator.Iterator;
 import tickets.Ticket;
 
-import java.rmi.NoSuchObjectException;
 import java.util.LinkedList;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.stream.Collectors;
+
 
 
 /**

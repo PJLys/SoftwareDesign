@@ -1,10 +1,13 @@
 package tickets;
 
-    public enum ExpenseType {
-        AIRPLANE,
-        RESTAURANT,
-        TAXI,
-        CONCERT,
-        HOTEL
-    }
+/**
+ * List of all possible events
+ */
+public enum ExpenseType {
+    AIRPLANE,
+    RESTAURANT,
+    TAXI,
+    CONCERT,
+    HOTEL
+}
 
