@@ -135,8 +135,6 @@ public class TicketController implements Controller {
                     debts.replace(e.p, debts.get(e.p) - e.val);
                     debts.replace(payer, debts.get(payer) + e.val);
                 }
-                default:
-                    System.out.println("Ticket Unrecognisable!\n"+t.getClass().getName());
             }
             else {
                 // Convert ticket to EST, so we can get all specific info
