@@ -32,6 +32,7 @@ public class PersonPanel extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             PersonPanel.this.controller.addPerson(nameField.getText());
+            nameField.setText("");
         }
     }
 }
