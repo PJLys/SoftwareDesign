@@ -9,9 +9,6 @@ public abstract class Ticket {
         this.type = t;
         this.payer = p;
     }
-    public ExpenseType[] getExpenseType(){
-        return ExpenseType.values();
-    }
     public Person getPayer() {
         return this.payer;
     }

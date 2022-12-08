@@ -37,20 +37,6 @@ public class TicketFactory {
         return new UnevenSplitTicket(values[index], payer, entries);
     }
 
-    public Ticket createEvenSplitTicket_terminalIF(Person payer, ArrayList<Person> attendants) throws IOException {
-        Scanner in = new Scanner(System.in);
-        System.out.println("What's the type of expense? (give number)");
-        ExpenseType[] values = ExpenseType.values();
-        for (int i=0; i< values.length; i++){
-            System.out.println(i+ " "+values[i]);
-        }
-        int index = Integer.parseInt(in.nextLine());
-
-        System.out.println("What's the per person prize?");
-        double ppp = Double.parseDouble(in.nextLine());
-
-        return new EvenSplitTicket(values[index],payer,ppp,attendants);
-    }
 
     public Ticket createEvenSplitTicket(ExpenseType type, Person payer, double total, ArrayList<Person> attendants) {
         return new EvenSplitTicket(type, payer, total/(1+attendants.size()), attendants);
