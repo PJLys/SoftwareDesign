@@ -23,15 +23,23 @@ public class TicketPanel extends JPanel {
 
     private static JList<Object> expenseTypeList;
 
+    private static JScrollPane expenseTypeScrollPane;
+
     private static JList<String> payerList;
+
+    private static JScrollPane payerScrollPane;
 
     private static JTextField totalField;
 
     private static ArrayList<JList<String>> ustPersonListArray;
 
+    private static ArrayList<JScrollPane> ustScrollPaneArray;
+
     private static ArrayList<JTextField> amountArray;
 
     private static JList<String> estPersonList;
+
+    private static JScrollPane estPersonScrollPane;
 
     private static JLabel expenseTypeLabel;
 
@@ -69,6 +77,7 @@ public class TicketPanel extends JPanel {
         DefaultListModel<Object> expenseListModel = new DefaultListModel<>();
         EnumSet.allOf(ExpenseType.class).forEach(expenseListModel::addElement);
         expenseTypeList = new JList<> (expenseListModel);
+        expenseTypeScrollPane = new JScrollPane(expenseTypeList);
         expenseTypeList.addListSelectionListener(new ExpenseTypeSelectionListener());
         expenseTypeList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
@@ -81,6 +90,7 @@ public class TicketPanel extends JPanel {
         payerList = new JList<>(payerDLM);
         payerList.addListSelectionListener(new PayerSelectionListener());
         payerList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        payerScrollPane = new JScrollPane(payerList);
 
         personsLabel = new JLabel("Persons:");
         debtLabel = new JLabel("Amount:");
@@ -95,9 +105,9 @@ public class TicketPanel extends JPanel {
         this.add(splitTypeList);
 
         this.add(expenseTypeLabel);
-        this.add(expenseTypeList);
+        this.add(expenseTypeScrollPane);
         this.add(payerLabel);
-        this.add(payerList);
+        this.add(payerScrollPane);
         this.add(totalLabel);
         this.add(totalField);
         this.add(personsLabel);
@@ -111,9 +121,9 @@ public class TicketPanel extends JPanel {
 
         addTicketButton.setVisible(false);
         expenseTypeLabel.setVisible(false);
-        expenseTypeList.setVisible(false);
+        expenseTypeScrollPane.setVisible(false);
         payerLabel.setVisible(false);
-        payerList.setVisible(false);
+        payerScrollPane.setVisible(false);
         totalLabel.setVisible(false);
         totalField.setVisible(false);
         personsLabel.setVisible(false);
@@ -137,6 +147,7 @@ public class TicketPanel extends JPanel {
         }
         amountArray = new ArrayList<>();
         ustPersonListArray = new ArrayList<>();
+        ustScrollPaneArray = new ArrayList<>();
     }
 
     private void setPayerDLM() {
@@ -156,7 +167,8 @@ public class TicketPanel extends JPanel {
         estPersonList = new JList<>(personDLM);
         estPersonList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         estPersonList.addListSelectionListener(new ESTPersonSelectionListener());
-        this.add(estPersonList);
+        estPersonScrollPane = new JScrollPane(estPersonList);
+        this.add(estPersonScrollPane);
         personsLabel.setVisible(true);
     }
 
@@ -176,29 +188,29 @@ public class TicketPanel extends JPanel {
         JList<String> personList = new JList<>(personDLM);
         personList.addListSelectionListener(new USTPersonSelectionListener());
         personList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JScrollPane scrollPane = new JScrollPane(personList);
         ustPersonListArray.add(personList);
-        this.add(personList);
+        ustScrollPaneArray.add(scrollPane);
+        this.add(scrollPane);
         this.add(amountField);
     }
 
     public void changeSplitType() {
-        amountArray.forEach(this::remove);
-        ustPersonListArray.forEach(this::remove);
         personsLabel.setVisible(false);
         debtLabel.setVisible(false);
-        amountArray = new ArrayList<>();
-        ustPersonListArray = new ArrayList<>();
         addTicketButton.setVisible(false);
 
         Component[] components = this.getComponents();
-        if (splitTypeList.getSelectedIndex() == 0 & Arrays.asList(components).contains(estPersonList)) {
-            this.remove(estPersonList);
+        System.out.println(!ustScrollPaneArray.isEmpty());
+        if (Arrays.asList(components).contains(estPersonScrollPane)) {
+            this.remove(estPersonScrollPane);
+            this.initializeUST();
+        }
+        else if (!ustScrollPaneArray.isEmpty()){
+            ustScrollPaneArray.forEach(this::remove);
+            amountArray.forEach(this::remove);
             this.remove(debtLabel);
             this.initializeEST();
-        }
-        else if (Arrays.asList(components).contains(estPersonList)){
-            this.remove(estPersonList);
-            this.initializeUST();
         }
         this.revalidate();
         this.repaint();
@@ -234,7 +246,7 @@ public class TicketPanel extends JPanel {
         public void valueChanged(ListSelectionEvent e) {
             if (!e.getValueIsAdjusting()) {
                 if (expenseTypeList.isSelectionEmpty()) {
-                    expenseTypeList.setVisible(true);
+                    expenseTypeScrollPane.setVisible(true);
                     expenseTypeLabel.setVisible(true);
                 }
                 else {
@@ -247,7 +259,7 @@ public class TicketPanel extends JPanel {
     private class ExpenseTypeSelectionListener implements ListSelectionListener {
         @Override
         public void valueChanged(ListSelectionEvent e) {
-                payerList.setVisible(true);
+                payerScrollPane.setVisible(true);
                 payerLabel.setVisible(true);
                 TicketPanel.this.updatePersonDLM();
         }

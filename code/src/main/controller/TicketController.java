@@ -1,7 +1,6 @@
 package controller;
 
 
-import com.sun.tools.javac.code.Type;
 import databases.*;
 import debts.Transaction;
 import factory.TicketFactory;
