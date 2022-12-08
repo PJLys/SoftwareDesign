@@ -14,5 +14,6 @@ public interface Controller {
     public Ticket makeEvenSplitTicket() throws IOException;
     public Ticket makeUnevenSplitTicket() throws IOException;
     public Person getPerson(String name);
+    public ArrayList<String> getPersonStringList();
     public ArrayList<Transaction> calcDebt();
 }

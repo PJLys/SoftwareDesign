@@ -23,7 +23,7 @@ public class PersonIt implements Iterator {
      */
     @Override
     public Object next() {
-        return PersonDB.getInstance().get(index++);
+        return PersonDB.getInstance().get(++index);
     }
 
     /**

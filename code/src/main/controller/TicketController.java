@@ -151,6 +151,18 @@ public class TicketController implements Controller {
         return p.orElse(null);
     }
 
+    @Override
+    public ArrayList<String> getPersonStringList() {
+        PersonIt personIt = (PersonIt) persons.createIt();
+        ArrayList<String> personStringList = new ArrayList<>();
+        Person person;
+        while (personIt.hasNext()) {
+            person = (Person) personIt.next();
+            personStringList.add(person.getName());
+        }
+        return personStringList;
+    }
+
     /**
      * 1) Iterate through people to create a debt hashmap
      * 2) Iterate through tickets and update debt hashmap accordingly
