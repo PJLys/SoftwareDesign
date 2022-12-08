@@ -1,7 +1,5 @@
 package controller;
 
-
-import com.sun.tools.javac.code.Type;
 import databases.*;
 import debts.Transaction;
 import factory.TicketFactory;
@@ -26,26 +24,6 @@ public class TicketController implements Controller {
         this.tf = factory;
     }
 
-    @Override
-    public int addEvenSplitTicket(Ticket t) {
-        if (! (t instanceof EvenSplitTicket))
-            return -1;
-        if (tickets.find(t))
-            return -1;
-        tickets.addTicket(t);
-        return 0;
-    }
-
-    @Override
-    public int addUnevenSplitTicket(Ticket t) {
-        if (! (t instanceof UnevenSplitTicket))
-            return -1;
-        if (tickets.find(t))
-            return -1;
-        tickets.addTicket(t);
-        return 0;
-    }
-
     /**
      * Adds a person based on its name
      * @param name name of the person we want to add
@@ -67,6 +45,15 @@ public class TicketController implements Controller {
         return p.map(this.persons::removePerson).orElse(-1);
     }
 
+    /**
+     * Takes in parameters from the GUI, translates and forwards them to the factory.
+     * The returned ticket will be added to the DB's and returned for Testing purposes.
+     * @param type Expense type
+     * @param payer_name name of the payer
+     * @param total total sum paid
+     * @param attendants Names of the attendants
+     * @return Ticekt that has been created
+     */
     @Override
     public Ticket makeEvenSplitTicket(ExpenseType type, String payer_name, double total, List<String> attendants) {
         ArrayList<Person> list = new ArrayList<>();
@@ -76,6 +63,14 @@ public class TicketController implements Controller {
         return ticket;
     }
 
+    /**
+     * Takes in parameters from the GUI, translates and forwards them to the factory.
+     * The returned ticket will be added to the DB's and returned for Testing purposes.
+     * @param type Expense type
+     * @param payer_name name of the payer
+     * @param named_entries Hashmap of attendant names and their debt
+     * @return Ticket that has been created
+     */
     @Override
     public Ticket makeUnevenSplitTicket(ExpenseType type, String payer_name, HashMap<String, Double> named_entries) {
         ArrayList<UnevenEntry> entries = new ArrayList<>();
