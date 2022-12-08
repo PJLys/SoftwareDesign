@@ -208,21 +208,23 @@ public class TicketPanel extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (splitTypeList.getSelectedIndex() == 0) {
-                TicketPanel.this.controller.addEvenSplitTicket((ExpenseType) expenseTypeList.getSelectedValue(), payerList.getSelectedValue(), estPersonList.getSelectedValuesList());
+                TicketPanel.this.controller.makeEvenSplitTicket((ExpenseType) expenseTypeList.getSelectedValue(), payerList.getSelectedValue(), Double.parseDouble(totalField.getText()), estPersonList.getSelectedValuesList());
             }
             else {
                 HashMap<String, Double> hashMap = new HashMap<>();
                 String name;
                 Double amount;
                 for (int i = 0; i < ustPersonListArray.size(); i++) {
-                    name = ustPersonListArray.get(i).getSelectedValue();
-                    amount = Double.valueOf(amountArray.get(i).getText());
-                    if (hashMap.containsKey(name)) {
-                        amount += hashMap.get(name);
+                    if (!ustPersonListArray.get(i).isSelectionEmpty()) {
+                        name = ustPersonListArray.get(i).getSelectedValue();
+                        amount = Double.valueOf(amountArray.get(i).getText());
+                        if (hashMap.containsKey(name)) {
+                            amount += hashMap.get(name);
+                        }
+                        hashMap.put(name, amount);
                     }
-                    hashMap.put(name,amount);
                 }
-                TicketPanel.this.controller.addUnevenSplitTicket((ExpenseType) expenseTypeList.getSelectedValue(), payerList.getSelectedValue());
+                TicketPanel.this.controller.makeUnevenSplitTicket((ExpenseType) expenseTypeList.getSelectedValue(), payerList.getSelectedValue(), hashMap);
             }
         }
     }

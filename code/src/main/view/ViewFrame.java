@@ -2,6 +2,7 @@ package view;
 
 import controller.Controller;
 import controller.TicketController;
+import view.panels.CalculateTotalPanel;
 import view.panels.TicketPanel;
 import view.panels.MenuPanel;
 import view.panels.PersonPanel;
@@ -14,7 +15,9 @@ import java.beans.PropertyChangeListener;
 
 public class ViewFrame extends JFrame implements PropertyChangeListener {
     private Controller controller;
-    private JPanel personPanel, calculateTotalPanel, menuPanel;
+    private JPanel personPanel, menuPanel;
+
+    private CalculateTotalPanel calculateTotalPanel;
 
     private TicketPanel ticketPanel;
 
@@ -30,7 +33,7 @@ public class ViewFrame extends JFrame implements PropertyChangeListener {
     private void createPanels() {
         personPanel = new PersonPanel(controller, this);
         ticketPanel = new TicketPanel(controller, this);
-        calculateTotalPanel = new JPanel();
+        calculateTotalPanel = new CalculateTotalPanel(controller, this);
         menuPanel = new MenuPanel(this);
     }
 
@@ -58,9 +61,11 @@ public class ViewFrame extends JFrame implements PropertyChangeListener {
     public class CalculateActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
+            calculateTotalPanel.recalculate();
             getContentPane().removeAll();
             getContentPane().add(calculateTotalPanel);
             repaint();
+            setVisible(true);
         }
     }
     public class BackActionListener implements ActionListener {
