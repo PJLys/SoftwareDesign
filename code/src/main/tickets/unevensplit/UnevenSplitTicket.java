@@ -20,7 +20,7 @@ public class UnevenSplitTicket extends Ticket {
     public String toString() {
         return "UnevenSplitTicket{" +
                 "Payer: " + super.getPayer() +
-                "entries: " + entries +
+                "\tEntries: " + entries +
                 '}';
     }
 }

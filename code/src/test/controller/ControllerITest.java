@@ -38,6 +38,7 @@ public class ControllerITest {
         double total = 50.64;
         List<String> atts = new ArrayList<>();
         atts.add("Alex"); atts.add("Chad");
+        Ticket ticket = controller.makeEvenSplitTicket(t,"Alex",total,atts);
         Assert.assertEquals("Should be type TAXI", ExpenseType.TAXI, ticket.getType());
     }
 }

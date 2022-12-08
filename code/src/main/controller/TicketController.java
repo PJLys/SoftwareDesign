@@ -1,6 +1,7 @@
 package controller;
 
 
+import com.sun.tools.javac.code.Type;
 import databases.*;
 import debts.Transaction;
 import factory.TicketFactory;
@@ -67,19 +68,23 @@ public class TicketController implements Controller {
     }
 
     @Override
-    public void makeEvenSplitTicket(ExpenseType type, String payer_name, double total, List<String> attendants) {
+    public Ticket makeEvenSplitTicket(ExpenseType type, String payer_name, double total, List<String> attendants) {
         ArrayList<Person> list = new ArrayList<>();
         attendants.forEach(p -> list.add(this.getPerson(p)));
-        this.tickets.addTicket(this.tf.createEvenSplitTicket(type, this.getPerson(payer_name), total, list));
+        Ticket ticket = this.tf.createEvenSplitTicket(type, this.getPerson(payer_name), total, list);
+        this.tickets.addTicket(ticket);
+        return ticket;
     }
 
     @Override
-    public void makeUnevenSplitTicket(ExpenseType type, String payer_name, HashMap<String, Double> named_entries) {
+    public Ticket makeUnevenSplitTicket(ExpenseType type, String payer_name, HashMap<String, Double> named_entries) {
         ArrayList<UnevenEntry> entries = new ArrayList<>();
         for (String name : named_entries.keySet()) {
             entries.add(new UnevenEntry(this.getPerson(name), named_entries.get(name)));
         }
-        this.tickets.addTicket(this.tf.createUnevenSplitTicket(type, this.getPerson(payer_name), entries));
+        Ticket ticket = this.tf.createUnevenSplitTicket(type, this.getPerson(payer_name), entries);
+        this.tickets.addTicket(ticket);
+        return ticket;
     }
 
 
@@ -133,6 +138,8 @@ public class TicketController implements Controller {
                     for (Person p:people)
                         debts.replace(p,debts.get(p)-ppp);
                 }
+                default:
+                    System.out.println("Ticket Unrecognisable!\n"+t.getClass().getName());
             }
         }
 

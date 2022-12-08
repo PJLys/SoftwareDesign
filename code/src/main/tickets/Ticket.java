@@ -19,7 +19,7 @@ public abstract class Ticket {
     @Override
     public String toString() {
         return "Ticket{" +
-                "type=" + type +
+                "type= " + type +
                 ", payer=" + payer +
                 '}';
     }

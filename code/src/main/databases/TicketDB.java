@@ -49,6 +49,8 @@ public class TicketDB implements Aggregate {
     public int addTicket(Ticket t){
         if (!this.db.contains(t)){
             this.db.add(t);
+            System.out.println("Added ticket");
+            System.out.println(t.toString());
             return 0;
         }
         return -1;
