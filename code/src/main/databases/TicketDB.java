@@ -13,7 +13,7 @@ import java.util.LinkedList;
  * - Singleton (private constructor & public getInstance())
  * - Aggregate for TicketIt
  */
-public class TicketDB implements Aggregate, Database {
+public class TicketDB implements Aggregate {
 
     private static TicketDB instance = null;
 
@@ -33,8 +33,8 @@ public class TicketDB implements Aggregate, Database {
      * Intializes or returns intialized db
      * @return db
      */
-    @Override
-    public TicketDB getInstance() {
+
+    public static TicketDB getInstance() {
         if (instance == null)
             instance = new TicketDB();
         return instance;
