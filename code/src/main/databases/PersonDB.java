@@ -3,9 +3,7 @@ package databases;
 import iterator.Aggregate;
 import iterator.Iterator;
 import person.Person;
-import tickets.Ticket;
 
-import javax.swing.text.html.Option;
 import java.util.LinkedList;
 import java.util.Optional;
 
@@ -14,7 +12,7 @@ import java.util.Optional;
  * - Singleton (private constructor & public getInstance())
  */
 
-public class PersonDB implements Aggregate {
+public class PersonDB implements Aggregate, Database {
     private static PersonDB instance = null;
     /**
      * DB is a LinkedList : easy addition & removal of Persons
@@ -25,7 +23,8 @@ public class PersonDB implements Aggregate {
         this.db = new LinkedList<>();
     }
 
-    public static PersonDB getInstance() {
+    @Override
+    public PersonDB getInstance() {
         if (instance==null)
             instance = new PersonDB();
         return instance;
@@ -56,6 +55,11 @@ public class PersonDB implements Aggregate {
         return -1;
     }
 
+    /**
+     * Looks for a person with key=name
+     * @param name name of the person we're looking for
+     * @return Person class (if present)
+     */
     public Optional<Person> find(String name){
         return this.db.stream().filter(p ->name.equals(p.getName())).findFirst();
     }

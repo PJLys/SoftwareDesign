@@ -2,6 +2,9 @@ package tickets.unevensplit;
 
 import person.Person;
 
+/**
+ * Stores a person with a corresponding debt
+ */
 public class UnevenEntry {
     public Person p;
     public double val;

@@ -2,6 +2,9 @@ package tickets;
 
 import person.Person;
 
+/**
+ * Abstract ticket, will be stored in the DB
+ */
 public abstract class Ticket {
     private final ExpenseType type;
     private final Person payer;

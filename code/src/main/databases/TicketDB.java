@@ -4,11 +4,8 @@ import iterator.Aggregate;
 import iterator.Iterator;
 import tickets.Ticket;
 
-import java.rmi.NoSuchObjectException;
 import java.util.LinkedList;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.stream.Collectors;
+
 
 
 /**
@@ -16,7 +13,7 @@ import java.util.stream.Collectors;
  * - Singleton (private constructor & public getInstance())
  * - Aggregate for TicketIt
  */
-public class TicketDB implements Aggregate {
+public class TicketDB implements Aggregate, Database {
 
     private static TicketDB instance = null;
 
@@ -36,7 +33,8 @@ public class TicketDB implements Aggregate {
      * Intializes or returns intialized db
      * @return db
      */
-    public static TicketDB getInstance() {
+    @Override
+    public TicketDB getInstance() {
         if (instance == null)
             instance = new TicketDB();
         return instance;
