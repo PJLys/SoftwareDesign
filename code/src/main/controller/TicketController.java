@@ -19,30 +19,10 @@ public class TicketController implements Controller {
     private final PersonDB persons;
     private final TicketFactory tf;
 
-    public TicketController(TicketDB ticketDB, PersonDB personDB, TicketFactory factory){
+    public TicketController(TicketDB ticketDB, PersonDB personDB, TicketFactory factory)  {
         this.tickets = ticketDB;
         this.persons = personDB;
         this.tf = factory;
-    }
-
-    @Override
-    public int addEvenSplitTicket(Ticket t) {
-        if (! (t instanceof EvenSplitTicket))
-            return -1;
-        if (tickets.find(t))
-            return -1;
-        tickets.addTicket(t);
-        return 0;
-    }
-
-    @Override
-    public int addUnevenSplitTicket(Ticket t) {
-        if (! (t instanceof UnevenSplitTicket))
-            return -1;
-        if (tickets.find(t))
-            return -1;
-        tickets.addTicket(t);
-        return 0;
     }
 
     /**
@@ -66,6 +46,16 @@ public class TicketController implements Controller {
         return p.map(this.persons::removePerson).orElse(-1);
     }
 
+    /**
+     * Translates inputs into usable types for creating an even split ticket,
+     * calls the factory,
+     * adds the created ticket to the DB.
+     * @param type Expense type (Cab, plane, concert, ...)
+     * @param payer_name Person who paid
+     * @param total Total amount paid
+     * @param attendants list of people who were paid for
+     * @return newly added ticket
+     */
     @Override
     public Ticket makeEvenSplitTicket(ExpenseType type, String payer_name, double total, List<String> attendants) {
         ArrayList<Person> list = new ArrayList<>();
@@ -75,6 +65,15 @@ public class TicketController implements Controller {
         return ticket;
     }
 
+    /**
+     * Translates inputs into usable types for creating an uneven split ticket,
+     * calls the factory,
+     * adds the created ticket to the DB.
+     * @param type Expense type (Cab, plane, concert, ...)
+     * @param payer_name Person who paid
+     * @param named_entries Mapping of people names with their respective debt
+     * @return Newly added ticket
+     */
     @Override
     public Ticket makeUnevenSplitTicket(ExpenseType type, String payer_name, HashMap<String, Double> named_entries) {
         ArrayList<UnevenEntry> entries = new ArrayList<>();
@@ -85,7 +84,6 @@ public class TicketController implements Controller {
         this.tickets.addTicket(ticket);
         return ticket;
     }
-
 
     /**
      * Will return a person based on its name
@@ -98,6 +96,10 @@ public class TicketController implements Controller {
         return p.orElse(null);
     }
 
+    /**
+     * lists people's names
+     * @return all names
+     */
     @Override
     public ArrayList<String> getPersonStringList() {
         PersonIt personIt = (PersonIt) persons.createIt();
