@@ -122,29 +122,27 @@ public class TicketController implements Controller {
 
         while(tit.hasNext()){
             Ticket t = (Ticket) tit.next();
-            switch (t.getClass().getName()){
-                case "UnevenSplitTicket" : {
-                    UnevenSplitTicket ust = (UnevenSplitTicket) t;
-                    Person payer = ust.getPayer();
-                    ArrayList<UnevenEntry> entries = ust.getEntries();
-                    for (UnevenEntry e:entries) {
-                        debts.replace(e.p, debts.get(e.p) - e.val);
-                        debts.replace(payer, debts.get(payer) + e.val);
-                    }
+            if (t instanceof UnevenSplitTicket) {
+                UnevenSplitTicket ust = (UnevenSplitTicket) t;
+                Person payer = ust.getPayer();
+                ArrayList<UnevenEntry> entries = ust.getEntries();
+                for (UnevenEntry e:entries) {
+                    debts.replace(e.p, debts.get(e.p) - e.val);
+                    debts.replace(payer, debts.get(payer) + e.val);
                 }
-                case "EvenSplitTicket" : {
-                    // Convert ticket to EST, so we can get all specific info
-                    assert t instanceof EvenSplitTicket;
-                    EvenSplitTicket est = (EvenSplitTicket) t;
-                    Person payer = est.getPayer();
-                    double ppp = est.getPpp();
-                    ArrayList<Person> people = est.getPersons();
-                    // Add (price per person) * (every person paid for) + (previous amount to debts)
-                    debts.replace(payer, debts.get(payer)+ppp* people.size());
-                    // Subtract ppp from every person paid for
-                    for (Person p:people)
-                        debts.replace(p,debts.get(p)-ppp);
-                }
+            }
+            else {
+                // Convert ticket to EST, so we can get all specific info
+                assert t instanceof EvenSplitTicket;
+                EvenSplitTicket est = (EvenSplitTicket) t;
+                Person payer = est.getPayer();
+                double ppp = est.getPpp();
+                ArrayList<Person> people = est.getPersons();
+                // Add (price per person) * (every person paid for) + (previous amount to debts)
+                debts.replace(payer, debts.get(payer)+ppp* people.size());
+                // Subtract ppp from every person paid for
+                for (Person p:people)
+                    debts.replace(p,debts.get(p)-ppp);
             }
         }
 
@@ -156,12 +154,12 @@ public class TicketController implements Controller {
                 for (Person p2:keyset){
                     if (p1!=p2){
                         double bal2 = debts.get(p2);
-                        if (bal1<-bal2){
+                        if (bal1<-bal2 & bal2>0){
                             bal1 += bal2;
                             debts.replace(p1, bal1);
                             debts.replace(p2, 0.0);
                             transactions.add(new Transaction(p1, p2, bal2));
-                        } else {
+                        } else if (bal2>0) {
                             debts.replace(p1, 0.0);
                             debts.replace(p2, bal1+bal2);
                             transactions.add(new Transaction(p1, p2, -bal1));

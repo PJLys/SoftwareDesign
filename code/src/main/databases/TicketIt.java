@@ -15,7 +15,7 @@ public class TicketIt implements Iterator {
 
     @Override
     public Object next() {
-        return TicketDB.getInstance().get(index++);
+        return TicketDB.getInstance().get(++index);
     }
 
     @Override
