@@ -11,9 +11,6 @@ import tickets.evensplit.EvenSplitTicket;
 import tickets.unevensplit.UnevenEntry;
 import tickets.unevensplit.UnevenSplitTicket;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.*;
 
 public class TicketController implements Controller {
@@ -70,75 +67,21 @@ public class TicketController implements Controller {
     }
 
     @Override
-    public Ticket makeEvenSplitTicket() throws IOException {
-        return null;
+    public Ticket makeEvenSplitTicket(ExpenseType type, String payer_name, double total, List<String> attendants) {
+        ArrayList<Person> list = new ArrayList<>();
+        attendants.forEach(p -> list.add(this.getPerson(p)));
+        return this.tf.createEvenSplitTicket(type, this.getPerson(payer_name), total, list);
     }
 
     @Override
-    public Ticket makeUnevenSplitTicket() throws IOException {
-        return null;
-    }
-
-    /**
-     * Creates an EST with terminal input
-     * @return a new even split ticket
-     * @throws IOException when there's a problem with input streams
-     */
-    public Ticket makeEvenSplitTicket_terminalIF() throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        System.out.println("Give payer's name: ");
-        String name = reader.readLine();
-        Optional<Person> p = this.persons.find(name);
-        if (!p.isPresent())
-            throw new NoSuchElementException("Person doesn't exist");
-        Person payer = p.get();
-
-        System.out.println("Give attendant's name (<enter> to finish): ");
-        name = reader.readLine();
-        ArrayList<Person> attendants = new ArrayList<Person>();
-        while (!Objects.equals(name, "")){
-            p = this.persons.find(name);
-            if (p.isPresent()) {
-                attendants.add(p.get());
-            } else {
-                System.out.println("Person couldn't be found");
-            }
-            System.out.println("Give attendant's name (<enter> to finish): ");
-            name = reader.readLine();
+    public Ticket makeUnevenSplitTicket(ExpenseType type, String payer_name, HashMap<String, Double> named_entries) {
+        ArrayList<UnevenEntry> entries = new ArrayList<>();
+        for (String name : named_entries.keySet()) {
+            entries.add(new UnevenEntry(this.getPerson(name), named_entries.get(name)));
         }
-
-        return tf.createEvenSplitTicket(payer, attendants);
+        return this.tf.createUnevenSplitTicket(type, this.getPerson(payer_name), entries);
     }
 
-    /**
-     * Creates an UST with terminal input
-     * @return a new uneven split ticket
-     * @throws IOException when there's a problem with input streams
-     */
-    public Ticket makeUnevenSplitTicket_terminalIF() throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        System.out.println("Give payer's name: ");
-        String name = reader.readLine();
-        Optional<Person> p = this.persons.find(name);
-        if (!p.isPresent())
-            throw new NoSuchElementException("Person doesn't exist");
-        Person payer = p.get();
-
-        System.out.println("Give attendant's name (<enter> to finish): ");
-        name = reader.readLine();
-        ArrayList<Person> attendants = new ArrayList<Person>();
-        while (!Objects.equals(name, "")){
-            p = this.persons.find(name);
-            if (p.isPresent()) {
-                attendants.add(p.get());
-            } else {
-                System.out.println("Person couldn't be found");
-            }
-            System.out.println("Give attendant's name (<enter> to finish): ");
-            name = reader.readLine();
-        }
-        return tf.createUnevenSplitTicket(payer, attendants);
-    }
 
     /**
      * Will return a person based on its name
