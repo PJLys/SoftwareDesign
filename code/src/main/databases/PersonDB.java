@@ -12,7 +12,7 @@ import java.util.Optional;
  * - Singleton (private constructor & public getInstance())
  */
 
-public class PersonDB implements Aggregate {
+public class PersonDB implements Aggregate, Database {
     private static PersonDB instance = null;
     /**
      * DB is a LinkedList : easy addition & removal of Persons
@@ -23,7 +23,8 @@ public class PersonDB implements Aggregate {
         this.db = new LinkedList<>();
     }
 
-    public static PersonDB getInstance() {
+    @Override
+    public PersonDB getInstance() {
         if (instance==null)
             instance = new PersonDB();
         return instance;
