@@ -67,19 +67,19 @@ public class TicketController implements Controller {
     }
 
     @Override
-    public Ticket makeEvenSplitTicket(ExpenseType type, String payer_name, double total, List<String> attendants) {
+    public void makeEvenSplitTicket(ExpenseType type, String payer_name, double total, List<String> attendants) {
         ArrayList<Person> list = new ArrayList<>();
         attendants.forEach(p -> list.add(this.getPerson(p)));
-        return this.tf.createEvenSplitTicket(type, this.getPerson(payer_name), total, list);
+        this.tickets.addTicket(this.tf.createEvenSplitTicket(type, this.getPerson(payer_name), total, list));
     }
 
     @Override
-    public Ticket makeUnevenSplitTicket(ExpenseType type, String payer_name, HashMap<String, Double> named_entries) {
+    public void makeUnevenSplitTicket(ExpenseType type, String payer_name, HashMap<String, Double> named_entries) {
         ArrayList<UnevenEntry> entries = new ArrayList<>();
         for (String name : named_entries.keySet()) {
             entries.add(new UnevenEntry(this.getPerson(name), named_entries.get(name)));
         }
-        return this.tf.createUnevenSplitTicket(type, this.getPerson(payer_name), entries);
+        this.tickets.addTicket(this.tf.createUnevenSplitTicket(type, this.getPerson(payer_name), entries));
     }
 
 
@@ -157,7 +157,6 @@ public class TicketController implements Controller {
                         }
                     }
                 }
-
             }
         }
         return transactions;
