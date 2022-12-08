@@ -24,7 +24,7 @@ public class PersonDB implements Aggregate, Database {
     }
 
     @Override
-    public PersonDB getInstance() {
+    public static PersonDB getInstance() {
         if (instance==null)
             instance = new PersonDB();
         return instance;
