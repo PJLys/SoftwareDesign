@@ -11,10 +11,8 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.Objects;
+import java.util.*;
+import java.util.List;
 
 public class TicketPanel extends JPanel {
     private static JButton backButton;
@@ -52,6 +50,7 @@ public class TicketPanel extends JPanel {
 
     public TicketPanel(Controller controller, ViewFrame viewFrame) {
         this.controller = controller;
+        payerDLM = new DefaultListModel<>();
         setPayerDLM();
         personDLM = new DefaultListModel<>();
 
@@ -141,10 +140,9 @@ public class TicketPanel extends JPanel {
     }
 
     private void setPayerDLM() {
-        payerDLM = new DefaultListModel<>();
-        payerDLM.addElement("Placeholder 1");
-        payerDLM.addElement("Placeholder 2");
-        payerDLM.addElement("Placeholder 3");
+        ArrayList<String> personStringList;
+        personStringList = controller.getPersonStringList();
+        personStringList.forEach(name -> payerDLM.addElement(name));
     }
 
     private void initializeUST() {
@@ -206,13 +204,26 @@ public class TicketPanel extends JPanel {
         this.repaint();
     }
 
-    private static class AddTicketActionListener implements ActionListener {
+    private class AddTicketActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            // Use controller to add ticket
-            System.out.println("Placeholder for creating UST");
-            System.out.println(splitTypeList.getSelectedValue());
-            System.out.println(expenseTypeList.getSelectedValue());
+            if (splitTypeList.getSelectedIndex() == 0) {
+                TicketPanel.this.controller.addEvenSplitTicket((ExpenseType) expenseTypeList.getSelectedValue(), payerList.getSelectedValue(), estPersonList.getSelectedValuesList());
+            }
+            else {
+                HashMap<String, Double> hashMap = new HashMap<>();
+                String name;
+                Double amount;
+                for (int i = 0; i < ustPersonListArray.size(); i++) {
+                    name = ustPersonListArray.get(i).getSelectedValue();
+                    amount = Double.valueOf(amountArray.get(i).getText());
+                    if (hashMap.containsKey(name)) {
+                        amount += hashMap.get(name);
+                    }
+                    hashMap.put(name,amount);
+                }
+                TicketPanel.this.controller.addUnevenSplitTicket((ExpenseType) expenseTypeList.getSelectedValue(), payerList.getSelectedValue());
+            }
         }
     }
 
