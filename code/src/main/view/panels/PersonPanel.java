@@ -10,7 +10,9 @@ import java.awt.event.ActionListener;
 public class PersonPanel extends JPanel {
     private static JButton addPersonButton;
 
-    private static JTextArea nameField;
+    private static JButton backButton;
+
+    private static JTextField nameField;
 
     private final Controller controller;
 
@@ -18,14 +20,18 @@ public class PersonPanel extends JPanel {
         this.controller = controller;
         addPersonButton = new JButton("Add person");
         addPersonButton.addActionListener(new AddPersonActionListener());
-        nameField = new JTextArea(1, 30);
+        backButton = new JButton("Back");
+        backButton.addActionListener(viewFrame. new BackActionListener());
+        nameField = new JTextField( 30);
+        this.add(backButton);
+        this.add(nameField);
+        this.add(addPersonButton);
     }
 
-    public static class AddPersonActionListener implements ActionListener {
+    private class AddPersonActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            // Use controller to create new person
-            System.out.println(nameField.getText());
+            PersonPanel.this.controller.addPerson(nameField.getText());
         }
     }
 }

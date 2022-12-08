@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="MoneyTracker">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/MoneyTracker.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

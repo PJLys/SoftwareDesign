@@ -17,5 +17,6 @@ public interface Controller {
     public Ticket makeEvenSplitTicket(ExpenseType type, String payer, double total, List<String> attendants);
     public Ticket makeUnevenSplitTicket(ExpenseType type, String payer, HashMap<String, Double> entries);
     public Person getPerson(String name);
+    public ArrayList<String> getPersonStringList();
     public ArrayList<Transaction> calcDebt();
 }
