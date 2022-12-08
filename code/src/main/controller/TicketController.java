@@ -118,6 +118,7 @@ public class TicketController implements Controller {
      * 3) Iterate through the hashmap in order to find who owes who.
      * @return list of transactions to be done
      */
+    @Override
     public ArrayList<Transaction> calcDebt(){
         Iterator tit = TicketDB.getInstance().createIt();
         Iterator pit = PersonDB.getInstance().createIt();
