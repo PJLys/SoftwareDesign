@@ -34,12 +34,10 @@ public class PersonDB implements Aggregate {
      * @return 0 = succes; -1 = t is a duplicate
      */
     public int addPerson(Person p){
-        Optional<Person> opt = this.db.stream().filter(person -> person.getName().equals(p.getName())).findAny();
-        if (!opt.isPresent()){
-            this.db.add(p);
-            return 0;
-        }
-        return -1;
+        if (find(p.getName()).isPresent())
+            return -1;
+        this.db.add(p);
+        return 0;
     }
 
     /**
