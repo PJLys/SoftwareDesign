@@ -4,6 +4,8 @@ import iterator.Aggregate;
 import iterator.Iterator;
 import tickets.Ticket;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.LinkedList;
 
 
@@ -17,6 +19,8 @@ public class TicketDB implements Aggregate {
 
     private static TicketDB instance = null;
 
+    private final PropertyChangeSupport propertyChangeSupport;
+
     /**
      * DB is a Linked List : easy addition & removal of Tickets
      */
@@ -27,6 +31,7 @@ public class TicketDB implements Aggregate {
      */
     private TicketDB(){
         this.db = new LinkedList<>();
+        this.propertyChangeSupport = new PropertyChangeSupport(this);
     }
 
     /**
@@ -46,8 +51,8 @@ public class TicketDB implements Aggregate {
      */
     public int addTicket(Ticket t){
         if (!this.db.contains(t)){
+            this.propertyChangeSupport.firePropertyChange("TicketAdded", t, db);
             this.db.add(t);
-            System.out.println("Added ticket");
             System.out.println(t.toString());
             return 0;
         }
@@ -95,5 +100,14 @@ public class TicketDB implements Aggregate {
      */
     protected int size(){
         return this.db.size();
+    }
+
+    /**
+     * Add a new PropertyChangeListener to the database
+     * @param property The property on which it applies
+     * @param propertyChangeListener The PropertyChangeListener to add
+     */
+    public void addPropertyChangeListener(String property, PropertyChangeListener propertyChangeListener) {
+        propertyChangeSupport.addPropertyChangeListener(property, propertyChangeListener);
     }
 }
