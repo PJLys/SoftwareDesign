@@ -1,6 +1,7 @@
 package view.panels;
 
 import controller.Controller;
+import person.Person;
 import tickets.ExpenseType;
 import view.DoubleVerifier;
 import view.ViewFrame;
@@ -59,7 +60,6 @@ public class TicketPanel extends JPanel {
     public TicketPanel(Controller controller, ViewFrame viewFrame) {
         this.controller = controller;
         payerDLM = new DefaultListModel<>();
-        setPayerDLM();
         personDLM = new DefaultListModel<>();
 
         backButton = new JButton("Back");
@@ -114,7 +114,6 @@ public class TicketPanel extends JPanel {
     }
 
     public void reinitialize() {
-        setPayerDLM();
         expenseTypeList.clearSelection();
         payerList.clearSelection();
         splitTypeList.clearSelection();
@@ -150,11 +149,10 @@ public class TicketPanel extends JPanel {
         ustScrollPaneArray = new ArrayList<>();
     }
 
-    private void setPayerDLM() {
-        ArrayList<String> personStringList;
-        personStringList = controller.getPersonStringList();
-        personStringList.forEach(name -> payerDLM.addElement(name));
+    public void addPersonToDLM(Person person) {
+        payerDLM.addElement(person.getName());
     }
+
 
     private void initializeUST() {
         this.add(debtLabel);
@@ -233,7 +231,9 @@ public class TicketPanel extends JPanel {
                         if (hashMap.containsKey(name)) {
                             amount += hashMap.get(name);
                         }
-                        hashMap.put(name, amount);
+                        else {
+                            hashMap.put(name, amount);
+                        }
                     }
                 }
                 TicketPanel.this.controller.makeUnevenSplitTicket((ExpenseType) expenseTypeList.getSelectedValue(), payerList.getSelectedValue(), hashMap);

@@ -4,6 +4,8 @@ import iterator.Aggregate;
 import iterator.Iterator;
 import person.Person;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.LinkedList;
 import java.util.Optional;
 
@@ -19,8 +21,11 @@ public class PersonDB implements Aggregate {
      */
     private final LinkedList<Person> db;
 
+    private final PropertyChangeSupport propertyChangeSupport;
+
     private PersonDB(){
         this.db = new LinkedList<>();
+        this.propertyChangeSupport = new PropertyChangeSupport(this);
     }
 
     public static PersonDB getInstance() {
@@ -36,9 +41,11 @@ public class PersonDB implements Aggregate {
     public int addPerson(Person p){
         Optional<Person> opt = this.db.stream().filter(person -> person.getName().equals(p.getName())).findAny();
         if (!opt.isPresent()){
+            this.propertyChangeSupport.firePropertyChange("PersonAdded", db, p);
             this.db.add(p);
             return 0;
         }
+        this.propertyChangeSupport.firePropertyChange("PersonAlreadyExists", db, p);
         return -1;
     }
 
@@ -83,5 +90,14 @@ public class PersonDB implements Aggregate {
      */
     protected int size(){
         return this.db.size();
+    }
+
+    /**
+     * Add a new PropertyChangeListener to the database
+     * @param property The property on which it applies
+     * @param propertyChangeListener The PropertyChangeListener to add
+     */
+    public void addPropertyChangeListener(String property, PropertyChangeListener propertyChangeListener) {
+        propertyChangeSupport.addPropertyChangeListener(property, propertyChangeListener);
     }
 }
