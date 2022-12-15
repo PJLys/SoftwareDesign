@@ -1,6 +1,7 @@
 package database;
 
 import databases.PersonDB;
+import iterator.Iterator;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.Before;
@@ -20,6 +21,16 @@ public class PersonDB_ITest {
 
     @Test
     public void t_addRemove() {
+        // Empty the DB, because this isn't the case with multiple tests
+        try {
+            Iterator pit = pdb.createIt();
+            while(pit.hasNext())
+                pit.next();
+                pit.remove();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         Assert.assertEquals("Shouldn't be able to remove person in empty DB",-1, pdb.removePerson(alex));
         Assert.assertEquals("Should be able to add person to db", 0, pdb.addPerson(alex));
         Assert.assertEquals("Shouldn't be able to add the same person twice", -1, pdb.addPerson(alex));
