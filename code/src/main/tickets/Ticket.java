@@ -8,7 +8,7 @@ import person.Person;
 public abstract class Ticket {
     private final ExpenseType type;
     private final Person payer;
-    public Ticket(ExpenseType t, Person p){
+    public Ticket(ExpenseType t, Person p) {
         this.type = t;
         this.payer = p;
     }
