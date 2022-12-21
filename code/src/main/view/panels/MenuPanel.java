@@ -11,7 +11,7 @@ public class MenuPanel extends JPanel {
     private JButton calculateTotalButton;
 
     public MenuPanel(ViewFrame viewFrame) {
-        personButton = new JButton("Add a new person");
+        personButton = new JButton("Add or remove a person");
         personButton.addActionListener(viewFrame. new PersonActionListener());
         ticketButton = new JButton("Create a new ticket");
         ticketButton.addActionListener(viewFrame. new TicketActionListener());

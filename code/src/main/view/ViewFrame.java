@@ -23,19 +23,24 @@ public class ViewFrame extends JFrame implements PropertyChangeListener {
 
     private TicketPanel ticketPanel;
 
+    private static DefaultListModel<String> personDLM;
+
     private int personCounter;
 
     private int ticketCounter;
 
+    public static DefaultListModel<String> getPersonDLM() {
+        return personDLM;
+    }
+
     public void initialize(TicketController ticketController) {
         this.controller = ticketController;
-        createPanels();
         this.setSize(800, 800);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.getContentPane().add(menuPanel);
-        this.setVisible(true);
+        personDLM = new DefaultListModel<>();
         personCounter = 0;
         ticketCounter = 0;
+        createPanels();
     }
 
     private void createPanels() {
@@ -43,6 +48,8 @@ public class ViewFrame extends JFrame implements PropertyChangeListener {
         ticketPanel = new TicketPanel(controller, this);
         calculateTotalPanel = new CalculateTotalPanel(controller, this);
         menuPanel = new MenuPanel(this);
+        this.getContentPane().add(menuPanel);
+        this.setVisible(true);
     }
 
     public class PersonActionListener implements ActionListener {
@@ -58,7 +65,7 @@ public class ViewFrame extends JFrame implements PropertyChangeListener {
     public class TicketActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (controller.getPersonStringList().size() >= 2) {
+            if (personCounter >= 2) {
                 getContentPane().removeAll();
                 ticketPanel.reinitialize();
                 getContentPane().add(ticketPanel);
@@ -101,7 +108,9 @@ public class ViewFrame extends JFrame implements PropertyChangeListener {
     public void propertyChange(PropertyChangeEvent evt) {
         switch (evt.getPropertyName()) {
             case "PersonAdded":
-                ticketPanel.addPersonToDLM((Person) evt.getNewValue());
+//                ticketPanel.addPersonToDLM((Person) evt.getNewValue());
+                Person person = (Person) evt.getNewValue();
+                personDLM.addElement(person.getName());
                 personCounter++;
                 break;
             case "TicketAdded":
