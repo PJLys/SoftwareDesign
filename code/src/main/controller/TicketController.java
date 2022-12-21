@@ -124,8 +124,9 @@ public class TicketController implements Controller {
         Iterator pit = PersonDB.getInstance().createIt();
 
         Map<Person, Double> debts = new HashMap<Person, Double>();
-        while (pit.hasNext())
-            debts.put((Person) pit.next(),0.0);
+        while (pit.hasNext()) {
+            debts.put((Person) pit.next(), 0.0);
+        }
 
         while(tit.hasNext()){
             Ticket t = (Ticket) tit.next();
