@@ -2,15 +2,18 @@ package view.panels;
 
 import controller.Controller;
 import tickets.ExpenseType;
-import view.DoubleVerifier;
 import view.ViewFrame;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.text.NumberFormatter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.text.DecimalFormat;
 import java.util.*;
 
 /**
@@ -31,13 +34,13 @@ public class TicketPanel extends JPanel {
 
     private static JScrollPane payerScrollPane;
 
-    private static JTextField totalField;
+    private static JFormattedTextField totalField;
 
     private static ArrayList<JList<String>> ustPersonListArray;
 
     private static ArrayList<JScrollPane> ustScrollPaneArray;
 
-    private static ArrayList<JTextField> ustAmountArray;
+    private static ArrayList<JFormattedTextField> ustAmountArray;
 
     private static JList<String> estPersonList;
 
@@ -59,7 +62,7 @@ public class TicketPanel extends JPanel {
         this.controller = controller;
 
         backButton = new JButton("Back");
-        backButton.addActionListener(viewFrame. new BackActionListener());
+        backButton.addActionListener(viewFrame.new BackActionListener());
 
         addTicketButton = new JButton("Add Ticket");
         addTicketButton.addActionListener(new AddTicketActionListener());
@@ -72,16 +75,15 @@ public class TicketPanel extends JPanel {
         expenseTypeLabel = new JLabel("Type of expense");
         DefaultListModel<Object> expenseListModel = new DefaultListModel<>();
         EnumSet.allOf(ExpenseType.class).forEach(expenseListModel::addElement);
-        expenseTypeList = new JList<> (expenseListModel);
+        expenseTypeList = new JList<>(expenseListModel);
         expenseTypeScrollPane = new JScrollPane(expenseTypeList);
         expenseTypeList.addListSelectionListener(new ExpenseTypeSelectionListener());
         expenseTypeList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         totalLabel = new JLabel("Total amount");
-        totalField = new JTextField("0");
-        totalField.addActionListener(new TotalActionListener());
-        totalField.setInputVerifier(new DoubleVerifier());
 
+        totalField = new JFormattedTextField(new CustomNumberFormatter());
+        totalField.addPropertyChangeListener(new TotalPropertyChangeListener());
         payerLabel = new JLabel("Payer:");
         payerList = new JList<>(ViewFrame.getPersonDLM());
         payerList.addListSelectionListener(new PayerSelectionListener());
@@ -104,6 +106,27 @@ public class TicketPanel extends JPanel {
         this.add(expenseTypeScrollPane);
         this.add(payerLabel);
         this.add(payerScrollPane);
+    }
+
+    /**
+     * Updates the names in the DefaultListModels of the person selection JScrollPanes.
+     */
+    private static void updateUSTPersonDLM() {
+        for (int i = 0; i < ustPersonListArray.size(); i++) {
+            DefaultListModel dlm = (DefaultListModel) ustPersonListArray.get(i).getModel();
+            // Add all missing names
+            for (int j = 0; j < ViewFrame.getPersonDLM().getSize(); j++) {
+                if (!dlm.contains(ViewFrame.getPersonDLM().get(j))) {
+                    dlm.addElement(ViewFrame.getPersonDLM().get(j));
+                }
+            }
+            // Remove payer's name
+            dlm.removeElement(payerList.getSelectedValue());
+            // Remove elements selected in higher JLists
+            for (int k = 0; k < i; k++) {
+                dlm.removeElement(ustPersonListArray.get(k).getSelectedValue());
+            }
+        }
     }
 
     /**
@@ -192,9 +215,9 @@ public class TicketPanel extends JPanel {
      * Adds an extra JScrollPane for a person and a JTextField for the corresponding amount. Used for an uneven split ticket.
      */
     private void addUSTPersonDebtFields() {
-        JTextField amountField = new JTextField("0");
-        amountField.setInputVerifier(new DoubleVerifier());
-        amountField.addActionListener(new USTAmountActionListener());
+        JFormattedTextField amountField = new JFormattedTextField(new CustomNumberFormatter());
+        amountField.addPropertyChangeListener(new USTAmountPropertyChangeListener());
+        amountField.setText("0");
         ustAmountArray.add(amountField);
         // Copy the DefaultListModel
         DefaultListModel<String> dlm = new DefaultListModel<>();
@@ -209,28 +232,6 @@ public class TicketPanel extends JPanel {
         ustScrollPaneArray.add(scrollPane);
         this.add(scrollPane);
         this.add(amountField);
-    }
-
-
-    /**
-     * Updates the names in the DefaultListModels of the person selection JScrollPanes.
-     */
-    private static void updateUSTPersonDLM() {
-        for (int i = 0; i < ustPersonListArray.size(); i++) {
-            DefaultListModel dlm = (DefaultListModel) ustPersonListArray.get(i).getModel();
-            // Add all missing names
-            for (int j = 0; j < ViewFrame.getPersonDLM().getSize(); j++){
-                if (!dlm.contains(ViewFrame.getPersonDLM().get(j))) {
-                    dlm.addElement(ViewFrame.getPersonDLM().get(j));
-                }
-            }
-            // Remove payer's name
-            dlm.removeElement(payerList.getSelectedValue());
-            // Remove elements selected in higher JLists
-            for (int k = 0; k < i; k++) {
-                dlm.removeElement(ustPersonListArray.get(k).getSelectedValue());
-            }
-        }
     }
 
     /**
@@ -250,12 +251,12 @@ public class TicketPanel extends JPanel {
         if (Arrays.asList(components).contains(estPersonScrollPane)) {
             this.remove(estPersonScrollPane);
             this.initializeUST();
-        }
-        else if (!ustScrollPaneArray.isEmpty()) {
+        } else if (!ustScrollPaneArray.isEmpty()) {
             ustScrollPaneArray.forEach(this::remove);
             ustScrollPaneArray.clear();
             ustAmountArray.forEach(this::remove);
             ustAmountArray.clear();
+            ustPersonListArray.clear();
             this.remove(debtLabel);
             this.add(totalLabel);
             this.add(totalField);
@@ -266,24 +267,24 @@ public class TicketPanel extends JPanel {
 
     /**
      * Checks whether all fields are correctly filled in, to decide if the addTicketButton should get shown.
+     *
      * @return A boolean indicating whether addTicketButton should be shown.
      */
-    public boolean updateTicketButtonVisibility() {
+    public boolean checkTicketButtonVisibility() {
         Boolean estCheck = (estPersonList != null);
         if (estCheck) {
-            estCheck = (splitTypeList.getSelectedIndex() == 0) & !expenseTypeList.isSelectionEmpty() & !payerList.isSelectionEmpty() & (!Objects.equals(totalField.getText(), "0")) & !estPersonList.isSelectionEmpty();
+            estCheck = (splitTypeList.getSelectedIndex() == 0) & !expenseTypeList.isSelectionEmpty() & !payerList.isSelectionEmpty() & ((double) totalField.getValue() > 0) & !estPersonList.isSelectionEmpty();
         }
 
-        Boolean ustCheck = (splitTypeList.getSelectedIndex()==1) & !expenseTypeList.isSelectionEmpty() & !payerList.isSelectionEmpty() & (ustPersonListArray != null);
+        Boolean ustCheck = (splitTypeList.getSelectedIndex() == 1) & !expenseTypeList.isSelectionEmpty() & !payerList.isSelectionEmpty() & (ustPersonListArray != null);
         if (ustCheck) {
             ustCheck = ustCheck & (ustPersonListArray.size() >= 1);
         }
-        if (ustCheck) {
-            for (JList personList : ustPersonListArray) {
-                ustCheck = ustCheck & !personList.isSelectionEmpty();
-            }
-            for (JTextField amount : ustAmountArray) {
-                ustCheck = ustCheck & !Objects.equals(amount.getText(), "0");
+        if (ustCheck & (ustAmountArray != null)) {
+            for (int i = 0; i < ustPersonListArray.size(); i++) {
+                if (!ustPersonListArray.get(i).isSelectionEmpty()) {
+                    ustCheck = ustCheck & ((double) ustAmountArray.get(i).getValue() > 0);
+                }
             }
         }
         return estCheck | ustCheck;
@@ -295,25 +296,24 @@ public class TicketPanel extends JPanel {
     private class AddTicketActionListener implements ActionListener {
         /**
          * Adds a ticket to the database.
+         *
          * @param e the event to be processed
          */
         @Override
         public void actionPerformed(ActionEvent e) {
             if (splitTypeList.getSelectedIndex() == 0) {
-                TicketPanel.this.controller.makeEvenSplitTicket((ExpenseType) expenseTypeList.getSelectedValue(), payerList.getSelectedValue(), Double.parseDouble(totalField.getText()), estPersonList.getSelectedValuesList());
-            }
-            else {
+                TicketPanel.this.controller.makeEvenSplitTicket((ExpenseType) expenseTypeList.getSelectedValue(), payerList.getSelectedValue(), (double) totalField.getValue(), estPersonList.getSelectedValuesList());
+            } else {
                 HashMap<String, Double> hashMap = new HashMap<>();
                 String name;
-                Double amount;
+                double amount;
                 for (int i = 0; i < ustPersonListArray.size(); i++) {
                     if (!ustPersonListArray.get(i).isSelectionEmpty()) {
                         name = ustPersonListArray.get(i).getSelectedValue();
-                        amount = Double.valueOf(ustAmountArray.get(i).getText());
+                        amount = (double) ustAmountArray.get(i).getValue();
                         if (hashMap.containsKey(name)) {
                             hashMap.replace(name, hashMap.get(name) + amount);
-                        }
-                        else {
+                        } else {
                             hashMap.put(name, amount);
                         }
                     }
@@ -329,17 +329,17 @@ public class TicketPanel extends JPanel {
     private class SplitTypeSelectionListener implements ListSelectionListener {
         /**
          * Displays expenseType fields.
+         *
          * @param e the event that characterizes the change.
          */
         @Override
         public void valueChanged(ListSelectionEvent e) {
             if (!e.getValueIsAdjusting()) {
-                addTicketButton.setVisible(TicketPanel.this.updateTicketButtonVisibility());
+                addTicketButton.setVisible(TicketPanel.this.checkTicketButtonVisibility());
                 if (expenseTypeList.isSelectionEmpty()) {
                     expenseTypeScrollPane.setVisible(true);
                     expenseTypeLabel.setVisible(true);
-                }
-                else {
+                } else {
                     changeSplitType();
                 }
             }
@@ -352,12 +352,13 @@ public class TicketPanel extends JPanel {
     private class ExpenseTypeSelectionListener implements ListSelectionListener {
         /**
          * Displays payer fields.
+         *
          * @param e the event that characterizes the change.
          */
         @Override
         public void valueChanged(ListSelectionEvent e) {
             if (!e.getValueIsAdjusting()) {
-                addTicketButton.setVisible(TicketPanel.this.updateTicketButtonVisibility());
+                addTicketButton.setVisible(TicketPanel.this.checkTicketButtonVisibility());
                 payerScrollPane.setVisible(true);
                 payerLabel.setVisible(true);
             }
@@ -370,13 +371,14 @@ public class TicketPanel extends JPanel {
     private class PayerSelectionListener implements ListSelectionListener {
         /**
          * Checks whether UST or EST is selected in splitTypeList and adds total fields or initializes UST respectively.
+         *
          * @param e the event that characterizes the change.
          */
         @Override
         public void valueChanged(ListSelectionEvent e) {
             if (!e.getValueIsAdjusting()) {
                 if (!Arrays.asList(TicketPanel.this.getComponents()).contains(personsLabel)) {
-                    addTicketButton.setVisible(TicketPanel.this.updateTicketButtonVisibility());
+                    addTicketButton.setVisible(TicketPanel.this.checkTicketButtonVisibility());
                     if (splitTypeList.getSelectedIndex() == 0) {
                         TicketPanel.this.add(totalLabel);
                         TicketPanel.this.add(totalField);
@@ -384,8 +386,7 @@ public class TicketPanel extends JPanel {
                     } else if (splitTypeList.getSelectedIndex() == 1) {
                         TicketPanel.this.initializeUST();
                     }
-                }
-                else if (splitTypeList.getSelectedIndex() == 1) {
+                } else if (splitTypeList.getSelectedIndex() == 1) {
                     updateUSTPersonDLM();
                 }
             }
@@ -393,55 +394,52 @@ public class TicketPanel extends JPanel {
     }
 
     /**
-     * ActionListener used for totalField.
+     * PropertyChangeListener used for totalField.
      */
-    private class TotalActionListener implements ActionListener {
+    private class TotalPropertyChangeListener implements PropertyChangeListener {
         /**
          * Initializes the EST selection field, if the value is bigger than 0.
-         * @param e the event to be processed
+         *
+         * @param evt the event to be processed
          */
         @Override
-        public void actionPerformed(ActionEvent e) {
-            JTextField source = (JTextField) e.getSource();
-            try {
-                double value = DoubleVerifier.getDouble(source);
-                Component[] components = TicketPanel.this.getComponents();
-                if ((value > 0) & (!Arrays.asList(components).contains(estPersonScrollPane))) {
-                    TicketPanel.this.initializeEST();
-                    TicketPanel.this.revalidate();
-                }
+        public void propertyChange(PropertyChangeEvent evt) {
+            JFormattedTextField source = (JFormattedTextField) evt.getSource();
+            double value = (double) source.getValue();
+            Component[] components = TicketPanel.this.getComponents();
+            if ((value > 0) & (!Arrays.asList(components).contains(estPersonScrollPane))) {
+                TicketPanel.this.initializeEST();
+                TicketPanel.this.revalidate();
             }
-            catch (NumberFormatException ignored) {         // Shouldn´t appear due to DoubleVerifier on the text field
-            }
-            addTicketButton.setVisible(TicketPanel.this.updateTicketButtonVisibility());
+            addTicketButton.setVisible(TicketPanel.this.checkTicketButtonVisibility());
         }
     }
 
     /**
-     * ActionListener used for ust amount fields.
+     * PropertyChangeListener used for ust amount fields.
      */
-    private class USTAmountActionListener implements ActionListener {
+    private class USTAmountPropertyChangeListener implements PropertyChangeListener {
         /**
          * Adds the next person selection field & amount field if needed.
-         * @param e the event to be processed
+         *
+         * @param evt the event to be processed
          */
         @Override
-        public void actionPerformed(ActionEvent e) {
-            JTextField source = (JTextField) e.getSource();
+        public void propertyChange(PropertyChangeEvent evt) {
+            JFormattedTextField source = (JFormattedTextField) evt.getSource();
             try {
-                double value = DoubleVerifier.getDouble(source);
+                double value = (double) source.getValue();
                 if ((value > 0) & (ustAmountArray.contains(source))) {
-                    addTicketButton.setVisible(TicketPanel.this.updateTicketButtonVisibility());
                     if ((ustAmountArray.indexOf(source) == ustAmountArray.size() - 1) & (ustPersonListArray.size() < payerList.getModel().getSize() - 1) & (!ustPersonListArray.get(ustAmountArray.indexOf(source)).isSelectionEmpty())) {
                         TicketPanel.this.addUSTPersonDebtFields();
                         updateUSTPersonDLM();
                         TicketPanel.this.revalidate();
                     }
+                    addTicketButton.setVisible(TicketPanel.this.checkTicketButtonVisibility());
                 }
+            } catch (NullPointerException ignored) {
             }
-            catch (NumberFormatException ignored) {         // Shouldn´t appear due to DoubleVerifier on the text field
-            }
-            addTicketButton.setVisible(TicketPanel.this.updateTicketButtonVisibility());
+            addTicketButton.setVisible(TicketPanel.this.checkTicketButtonVisibility());
         }
     }
 
@@ -451,19 +449,20 @@ public class TicketPanel extends JPanel {
     private class USTPersonSelectionListener implements ListSelectionListener {
         /**
          * Checks whether to add another person selection field and updates names in them.
+         *
          * @param e the event that characterizes the change.
          */
         @Override
         public void valueChanged(ListSelectionEvent e) {
             JList<String> source = (JList<String>) e.getSource();
             if (!e.getValueIsAdjusting() & !source.isSelectionEmpty()) {
-                addTicketButton.setVisible(TicketPanel.this.updateTicketButtonVisibility());
-                if ((ustPersonListArray.indexOf(source) == ustPersonListArray.size() - 1) & (ustPersonListArray.size() < payerList.getModel().getSize() - 1) & (Double.parseDouble(ustAmountArray.get(ustPersonListArray.indexOf(source)).getText()) > 0)) {
+                if ((ustPersonListArray.indexOf(source) == ustPersonListArray.size() - 1) & (ustPersonListArray.size() < payerList.getModel().getSize() - 1) & ((double) ustAmountArray.get(ustPersonListArray.indexOf(source)).getValue()) > 0) {
                     TicketPanel.this.addUSTPersonDebtFields();
                     TicketPanel.this.revalidate();
                 }
             }
             updateUSTPersonDLM();
+            addTicketButton.setVisible(TicketPanel.this.checkTicketButtonVisibility());
         }
     }
 
@@ -473,13 +472,30 @@ public class TicketPanel extends JPanel {
     private class ESTPersonSelectionListener implements ListSelectionListener {
         /**
          * Displays the addTicketButton, if an item is selected.
+         *
          * @param e the event that characterizes the change.
          */
         @Override
         public void valueChanged(ListSelectionEvent e) {
             if (!e.getValueIsAdjusting()) {
-                addTicketButton.setVisible(TicketPanel.this.updateTicketButtonVisibility());
+                addTicketButton.setVisible(TicketPanel.this.checkTicketButtonVisibility());
             }
+        }
+    }
+
+    /**
+     * Custom implementatin of NumberFormatter, used in the amount field in the GUI.
+     */
+    public class CustomNumberFormatter extends NumberFormatter {
+        public CustomNumberFormatter() {
+            super();
+            DecimalFormat format = (DecimalFormat) DecimalFormat.getInstance(Locale.FRANCE);
+            format.applyPattern("###,##0.0#");
+            setFormat(format);
+            setValueClass(Double.class);
+            setAllowsInvalid(false);
+            setCommitsOnValidEdit(true);
+            setMinimum(0.0);
         }
     }
 }
