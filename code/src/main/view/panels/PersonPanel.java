@@ -7,6 +7,9 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Panel that facilitates adding and removing persons to the database.
+ */
 public class PersonPanel extends JPanel {
     private static JButton addPersonButton;
 
@@ -28,6 +31,10 @@ public class PersonPanel extends JPanel {
         this.add(addPersonButton);
     }
 
+
+    /**
+     * ActionListener used for the add person button.
+     */
     private class AddPersonActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {

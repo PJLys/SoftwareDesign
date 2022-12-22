@@ -6,6 +6,9 @@ import view.ViewFrame;
 
 import javax.swing.*;
 
+/**
+ * Panel that shows the trip total.
+ */
 public class CalculateTotalPanel extends JPanel {
     private static JButton backButton;
 
@@ -31,7 +34,10 @@ public class CalculateTotalPanel extends JPanel {
         this.add(entryJList);
     }
 
-    public void recalculate() {
+    /**
+     * Method invoked when switching to the panel. Calculates the total of the trip.
+     */
+    public void calculate() {
         entryListModel.removeAllElements();
         controller.calcDebt().forEach(entryListModel::addElement);
     }

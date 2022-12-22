@@ -2,7 +2,6 @@ package view;
 
 import controller.Controller;
 import controller.TicketController;
-import databases.TicketDB;
 import person.Person;
 import view.panels.CalculateTotalPanel;
 import view.panels.MenuPanel;
@@ -15,6 +14,10 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+
+/**
+ * Frame used for the GUI.
+ */
 public class ViewFrame extends JFrame implements PropertyChangeListener {
     private Controller controller;
     private JPanel personPanel, menuPanel;
@@ -43,6 +46,9 @@ public class ViewFrame extends JFrame implements PropertyChangeListener {
         createPanels();
     }
 
+    /**
+     * Creates all the panels used in the GUI.
+     */
     private void createPanels() {
         personPanel = new PersonPanel(controller, this);
         ticketPanel = new TicketPanel(controller, this);
@@ -52,6 +58,9 @@ public class ViewFrame extends JFrame implements PropertyChangeListener {
         this.setVisible(true);
     }
 
+    /**
+     * ActionListener used for switching to the PersonPanel.
+     */
     public class PersonActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -62,6 +71,9 @@ public class ViewFrame extends JFrame implements PropertyChangeListener {
         }
     }
 
+    /**
+     * ActionListener used for switching to the TicketPanel.
+     */
     public class TicketActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -78,11 +90,14 @@ public class ViewFrame extends JFrame implements PropertyChangeListener {
         }
     }
 
+    /**
+     * ActionListener used for switching to the CalculateTotalPanel.
+     */
     public class CalculateActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (ticketCounter >= 1) {
-                calculateTotalPanel.recalculate();
+                calculateTotalPanel.calculate();
                 getContentPane().removeAll();
                 getContentPane().add(calculateTotalPanel);
                 repaint();
@@ -95,6 +110,9 @@ public class ViewFrame extends JFrame implements PropertyChangeListener {
         }
     }
 
+    /**
+     * ActionListener used on the back buttons, to go back to the MenuPanel.
+     */
     public class BackActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -104,11 +122,15 @@ public class ViewFrame extends JFrame implements PropertyChangeListener {
         }
     }
 
+    /**
+     * Implementation of the observer, which observes both databases.
+     * @param evt A PropertyChangeEvent object describing the event source
+     *          and the property that has changed.
+     */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         switch (evt.getPropertyName()) {
             case "PersonAdded":
-//                ticketPanel.addPersonToDLM((Person) evt.getNewValue());
                 Person person = (Person) evt.getNewValue();
                 personDLM.addElement(person.getName());
                 personCounter++;
@@ -117,8 +139,9 @@ public class ViewFrame extends JFrame implements PropertyChangeListener {
                 JOptionPane.showMessageDialog(this, "Ticket added", "Action completed", JOptionPane.INFORMATION_MESSAGE);
                 ticketCounter++;
                 break;
-            case "PersonAlreadyExists": JOptionPane.showMessageDialog(this, "This person already exists in the database", "Error", JOptionPane.WARNING_MESSAGE);
-            break;
+            case "PersonAlreadyExists":
+                JOptionPane.showMessageDialog(this, "This person already exists in the database", "Error", JOptionPane.WARNING_MESSAGE);
+                break;
         }
     }
 }

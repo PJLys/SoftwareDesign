@@ -4,6 +4,9 @@ import view.ViewFrame;
 
 import javax.swing.*;
 
+/**
+ * Panel that shows a menu.
+ */
 public class MenuPanel extends JPanel {
     private JButton personButton;
     private JButton ticketButton;
