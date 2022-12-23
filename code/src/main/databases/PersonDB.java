@@ -56,8 +56,10 @@ public class PersonDB implements Aggregate {
     public int removePerson(Person p){
         if (this.db.contains(p)){
             this.db.remove(p);
+            this.propertyChangeSupport.firePropertyChange("PersonRemoved", p, db);
             return 0;
         }
+        this.propertyChangeSupport.firePropertyChange("PersonDoesNotExist", db, p);
         return -1;
     }
 

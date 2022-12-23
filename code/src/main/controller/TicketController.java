@@ -36,6 +36,42 @@ public class TicketController implements Controller {
     }
 
     /**
+     * Checks if a person is metioned in a ticket
+     * @param name name of the person
+     * @return True if the person is mentioned in a ticket, false otherwise
+     */
+    @Override
+    public boolean isPersonUsed(String name) {
+        Iterator tit = TicketDB.getInstance().createIt();
+        while(tit.hasNext()){
+            Ticket t = (Ticket) tit.next();
+            if (Objects.equals(t.getPayer().getName(), name)) {
+                return true;
+            }
+            if (t instanceof UnevenSplitTicket) {
+                UnevenSplitTicket ust = (UnevenSplitTicket) t;
+                ArrayList<UnevenEntry> entries = ust.getEntries();
+                for (UnevenEntry e:entries) {
+                    if (Objects.equals(e.p.getName(), name)) {
+                        return true;
+                    }
+                }
+            }
+            else {
+                // Convert ticket to EST, so we can get all specific info
+                assert t instanceof EvenSplitTicket;
+                EvenSplitTicket est = (EvenSplitTicket) t;
+                ArrayList<Person> people = est.getPersons();
+                for (Person p:people)
+                    if (Objects.equals(p.getName(), name)) {
+                        return true;
+                    }
+            }
+        }
+        return false;
+    }
+
+    /**
      * removes a person based on its name
      * @param name name of the person we want to remove
      * @return 0 = succes; -1 = person doesn't exist

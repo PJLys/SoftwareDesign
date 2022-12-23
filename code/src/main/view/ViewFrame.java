@@ -16,11 +16,13 @@ import java.beans.PropertyChangeListener;
 
 
 /**
- * Frame used for the GUI.
+ * JFrame used for the GUI.
  */
 public class ViewFrame extends JFrame implements PropertyChangeListener {
     private Controller controller;
-    private JPanel personPanel, menuPanel;
+    private PersonPanel personPanel;
+
+    private MenuPanel menuPanel;
 
     private CalculateTotalPanel calculateTotalPanel;
 
@@ -85,7 +87,7 @@ public class ViewFrame extends JFrame implements PropertyChangeListener {
                 setVisible(true);
             }
             else {
-                JOptionPane.showMessageDialog(ViewFrame.this, "Add at least 2 persons to the databse before creating a ticket", "Error", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(ViewFrame.this, "Add at least 2 persons to the database before creating a ticket", "Error", JOptionPane.WARNING_MESSAGE);
             }
         }
     }
@@ -140,8 +142,14 @@ public class ViewFrame extends JFrame implements PropertyChangeListener {
                 ticketCounter++;
                 break;
             case "PersonAlreadyExists":
-                JOptionPane.showMessageDialog(this, "This person already exists in the database", "Error", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "This person already exists in the database", "Error", JOptionPane.ERROR_MESSAGE);
                 break;
+            case "PersonRemoved":
+                person = (Person) evt.getOldValue();
+                personDLM.removeElement(person.getName());
+                break;
+            case "PersonDoesNotExist":
+                JOptionPane.showMessageDialog(this, "Person does not exit", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

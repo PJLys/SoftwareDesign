@@ -11,5 +11,7 @@ public class Main {
         TicketDB.getInstance().addPropertyChangeListener("TicketAdded", viewFrame);
         PersonDB.getInstance().addPropertyChangeListener("PersonAdded", viewFrame);
         PersonDB.getInstance().addPropertyChangeListener("PersonAlreadyExists", viewFrame);
+        PersonDB.getInstance().addPropertyChangeListener("PersonRemoved", viewFrame);
+        PersonDB.getInstance().addPropertyChangeListener("PersonDoesNotExist", viewFrame);
     }
 }

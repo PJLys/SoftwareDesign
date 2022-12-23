@@ -281,9 +281,15 @@ public class TicketPanel extends JPanel {
             ustCheck = ustCheck & (ustPersonListArray.size() >= 1);
         }
         if (ustCheck & (ustAmountArray != null)) {
-            for (int i = 0; i < ustPersonListArray.size(); i++) {
-                if (!ustPersonListArray.get(i).isSelectionEmpty()) {
-                    ustCheck = ustCheck & ((double) ustAmountArray.get(i).getValue() > 0);
+            ustCheck = ustCheck & (ustAmountArray.size() > 0);
+            if (ustCheck) {
+                // At least one person should be selected and have a valid amount
+                ustCheck = ustCheck & !ustPersonListArray.get(0).isSelectionEmpty() & (double) ustAmountArray.get(0).getValue() > 0;
+                // The others should have an amount if a person is selected
+                for (int i = 1; i < ustPersonListArray.size(); i++) {
+                    if (!ustPersonListArray.get(i).isSelectionEmpty()) {
+                        ustCheck = ustCheck & ((double) ustAmountArray.get(i).getValue() > 0);
+                    }
                 }
             }
         }
@@ -320,6 +326,9 @@ public class TicketPanel extends JPanel {
                 }
                 TicketPanel.this.controller.makeUnevenSplitTicket((ExpenseType) expenseTypeList.getSelectedValue(), payerList.getSelectedValue(), hashMap);
             }
+            TicketPanel.this.reinitialize();
+            TicketPanel.this.repaint();
+            TicketPanel.this.revalidate();
         }
     }
 
