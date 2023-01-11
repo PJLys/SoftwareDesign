@@ -169,8 +169,14 @@ public class TicketController implements Controller {
             if (t instanceof UnevenSplitTicket) {
                 UnevenSplitTicket ust = (UnevenSplitTicket) t;
                 Person payer = ust.getPayer();
+                if (!debts.containsKey(payer)) {
+                    debts.put(payer, 0.0);
+                }
                 ArrayList<UnevenEntry> entries = ust.getEntries();
                 for (UnevenEntry e:entries) {
+                    if (!debts.containsKey(e.p)) {
+                        debts.put(payer, 0.0);
+                    }
                     debts.replace(e.p, debts.get(e.p) - e.val);
                     debts.replace(payer, debts.get(payer) + e.val);
                 }
@@ -180,13 +186,20 @@ public class TicketController implements Controller {
                 assert t instanceof EvenSplitTicket;
                 EvenSplitTicket est = (EvenSplitTicket) t;
                 Person payer = est.getPayer();
+                if (!debts.containsKey(payer)) {
+                    debts.put(payer, 0.0);
+                }
                 double ppp = est.getPpp();
                 ArrayList<Person> people = est.getPersons();
                 // Add (price per person) * (every person paid for) + (previous amount to debts)
                 debts.replace(payer, debts.get(payer)+ppp* people.size());
                 // Subtract ppp from every person paid for
-                for (Person p:people)
-                    debts.replace(p,debts.get(p)-ppp);
+                for (Person p:people) {
+                    if (!debts.containsKey(p)) {
+                        debts.put(payer, 0.0);
+                    }
+                    debts.replace(p, debts.get(p) - ppp);
+                }
             }
         }
 
