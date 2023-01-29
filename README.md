@@ -4,7 +4,7 @@
 ## Outline
 Making a system that calculates your debt when going out in group.
 
-## Requirements
+## Functional Requirements
 - Addition/Removal of people
 - Global bill at end of trip (who pays who; how much)
 - GUI
@@ -18,3 +18,28 @@ Making a system that calculates your debt when going out in group.
 - Implementation of design patterns
 - UML diagrams
 - Tests 
+
+## Used Patterns
+- Singleton for the databases
+- MVC for frontend/backend connectivity
+- Observer for error messages
+- Factory for creation of tickets
+- Iterator for calculating the end bill
+
+## Unique feature
+Our system is designed to be resilient to different kinds of misuse and has therefore a basic error handling system that checks for:
+(Frontend)
+- Input type
+- Input values
+(Backend)
+- Duplicate Person entry
+- Removal of non-present persons
+- People with the same name
+- Duplicate Ticket entry
+
+Errors will be shown using an error message in the frontend
+
+## Possible improvements
+1) Since there is an option to leave, debts have to be calculated using the Persons in the tickets and not using the Person Database.
+2) Error handling could be done using error codes.
+
