@@ -34,12 +34,12 @@ Our system is designed to be resilient to different kinds of misuse and has ther
 (Backend)
 - Duplicate Person entry
 - Removal of non-present persons
+- Removal of Person linked in ticket
 - People with the same name
 - Duplicate Ticket entry
 
 Errors will be shown using an error message in the frontend
 
 ## Possible improvements
-1) Since there is an option to leave, debts have to be calculated using the Persons in the tickets and not using the Person Database.
-2) Error handling could be done using error codes.
+- Error handling could be done using error codes.
 
